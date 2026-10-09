@@ -1,0 +1,94 @@
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<% var navLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/destinations', label: 'Countries' },
+    { href: '/universities', label: 'Universities' },
+    { href: '/programs', label: 'Programs' },
+    { href: '/#about-us', label: 'About' },
+    { href: '/#contact-us', label: 'Contact' }
+]; %>
+<% function isCurrent(href) {
+    if (typeof currentPath === 'undefined') return false;
+    if (href.indexOf('#') > -1) return false;
+    if (href === '/') return currentPath === '/';
+    return currentPath === href || currentPath.indexOf(href + '/') === 0;
+} %>
+
+<header class="navbar-v2">
+    <div class="container-v2">
+        <a href="/" class="brand">
+            <!-- Inline recreation of the original banner-removebg-preview.png mark (same bar
+                 positions/heights/colors, hand-measured from the source PNG) so each bar can be
+                 animated individually — a flat <img> can't do a per-bar sequential blink. -->
+            <svg class="brand-logo-icon" viewBox="0 0 178 142" width="34" height="27" aria-hidden="true" focusable="false">
+                <rect class="logo-bar logo-bar-1" x="14" y="56" width="16" height="52" rx="8" fill="#F2B504"></rect>
+                <rect class="logo-bar logo-bar-2" x="41" y="33" width="15" height="84" rx="7.5" fill="#E4510C"></rect>
+                <rect class="logo-bar logo-bar-3" x="68" y="62" width="15" height="38" rx="7.5" fill="#F3B500"></rect>
+                <rect class="logo-bar logo-bar-4" x="94" y="8" width="15" height="100" rx="7.5" fill="#F3EA9B"></rect>
+                <rect class="logo-bar logo-bar-5" x="121" y="56" width="15" height="76" rx="7.5" fill="#F1B700"></rect>
+                <rect class="logo-bar logo-bar-6" x="148" y="46" width="15" height="62" rx="7.5" fill="#F6E99B"></rect>
+            </svg>
+            <span class="brand-name">Edu Connections</span>
+        </a>
+
+        <nav aria-label="Primary">
+            <ul class="nav-links">
+                <% navLinks.forEach(function (link) { %>
+                <li><a href="<%= link.href %>" <% if (isCurrent(link.href)) { %>aria-current="page"<% } %>><%= link.label %></a></li>
+                <% }); %>
+            </ul>
+        </nav>
+
+        <div class="nav-actions">
+            <button type="button" class="nav-icon-btn js-open-search" aria-label="Search">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </button>
+            <a href="/checkyoureligibility" class="btn-v2 btn-v2-primary btn-v2-sm">Check Your Eligibility</a>
+            <button type="button" class="nav-toggle js-open-drawer" aria-label="Open menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Mobile drawer -->
+<div class="mobile-drawer">
+    <div class="drawer-backdrop"></div>
+    <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="Menu">
+        <button type="button" class="nav-icon-btn drawer-close js-close-drawer" aria-label="Close menu">
+            <i class="fa fa-times" aria-hidden="true"></i>
+        </button>
+        <div class="drawer-search-wrap">
+            <form class="search-field" role="search" action="/universities" method="get" data-live-search>
+                <i class="fa fa-search search-icon" aria-hidden="true"></i>
+                <input type="search" name="q" class="js-search-input" placeholder="Search..." autocomplete="off" aria-label="Search universities, countries, programs">
+            </form>
+            <div class="search-results-panel" role="region" aria-label="Search results"></div>
+        </div>
+        <ul class="drawer-links">
+            <% navLinks.forEach(function (link) { %>
+            <li><a href="<%= link.href %>" <% if (isCurrent(link.href)) { %>aria-current="page"<% } %>><%= link.label %></a></li>
+            <% }); %>
+        </ul>
+        <a href="/checkyoureligibility" class="btn-v2 btn-v2-primary" style="width:100%">Check Your Eligibility</a>
+    </div>
+</div>
+
+<!-- Full-screen search overlay -->
+<div class="search-overlay">
+    <div class="search-overlay-panel">
+        <div class="close-search">
+            <button type="button" class="nav-icon-btn js-close-search" aria-label="Close search">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <form class="search-field" role="search" action="/universities" method="get" data-live-search>
+            <i class="fa fa-search search-icon" aria-hidden="true"></i>
+            <input type="search" name="q" class="js-search-input" placeholder="Search universities, countries, programs..." autocomplete="off" aria-label="Search universities, countries, programs">
+            <button type="submit" class="search-submit">Search</button>
+        </form>
+        <div class="search-results-panel" role="region" aria-label="Search results"></div>
+    </div>
+</div>
+

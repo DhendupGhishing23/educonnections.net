@@ -1,0 +1,140 @@
+<%- include('partials/head', {
+    title: title,
+    description: description,
+    needsRecaptcha: false
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="hero-v2" style="padding: 3.5rem 0 3rem;">
+    <div class="container-v2">
+        <nav class="breadcrumb-v2" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Universities</span></nav>
+        <span class="eyebrow-v2" style="margin-top:1rem;">Every partner, in one place</span>
+        <h1 style="color:#fff; font-size: clamp(1.9rem, 3.5vw, 2.6rem);">Universities &amp; Colleges</h1>
+        <p class="text-muted-dark" style="max-width:620px;">Search and filter every institution Edu Connections partners with, across every destination country.</p>
+    </div>
+</section>
+
+<section class="section-v2 section-light" style="padding-top:3rem;">
+    <div class="container-v2">
+        <form id="uniFilterForm" class="listing-toolbar" data-has-sheet method="get" action="/universities" role="search">
+            <div class="toolbar-search">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <input type="search" name="q" value="<%= query.q || '' %>" placeholder="Search by name, city or type..." aria-label="Search universities">
+            </div>
+            <div class="filter-group" style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                <select name="country" class="js-auto-filter" aria-label="Filter by country">
+                    <option value="">All countries</option>
+                    <% countryOptions.forEach(function (c) { %>
+                    <option value="<%= c.slug %>" <%= query.country === c.slug ? 'selected' : '' %>><%= c.name %></option>
+                    <% }); %>
+                </select>
+                <select name="category" class="js-auto-filter" aria-label="Filter by type">
+                    <option value="">All types</option>
+                    <% categoryList.forEach(function (c) { %>
+                    <option value="<%= c %>" <%= query.category === c ? 'selected' : '' %>><%= c %></option>
+                    <% }); %>
+                </select>
+                <select name="sort" class="js-auto-filter" aria-label="Sort">
+                    <option value="" <%= !query.sort ? 'selected' : '' %>>Sort: Featured</option>
+                    <option value="az" <%= query.sort === 'az' ? 'selected' : '' %>>Sort: A–Z</option>
+                    <option value="country" <%= query.sort === 'country' ? 'selected' : '' %>>Sort: Country</option>
+                </select>
+            </div>
+            <button type="button" class="toolbar-filter-btn js-open-filters"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg> Filters</button>
+            <noscript><button type="submit" class="btn-v2 btn-v2-primary btn-v2-sm">Search</button></noscript>
+        </form>
+
+        <div class="listing-meta">
+            <span><%= result.totalItems %> institution<%= result.totalItems === 1 ? '' : 's' %> found</span>
+            <span>Page <%= result.currentPage %> of <%= result.totalPages %></span>
+        </div>
+
+        <% if (result.items.length) { %>
+        <div class="uni-grid-v2">
+            <% result.items.forEach(function(u) { %>
+            <div class="uni-card-v2">
+                <div class="uni-card-top">
+                    <div class="uni-logo-wrap"><img src="/assets/images/<%= u.logo %>" loading="lazy" decoding="async" alt="<%= u.name %> logo"></div>
+                    <button type="button" class="favorite-btn" data-slug="<%= u.slug %>" aria-pressed="false" aria-label="Save <%= u.name %>"><i class="far fa-heart" aria-hidden="true"></i></button>
+                </div>
+                <h3><a href="/universities/<%= u.slug %>" style="color:inherit; text-decoration:none;"><%= u.name %></a></h3>
+                <div class="uni-meta-row">
+                    <span><i class="fa fa-map-marker" aria-hidden="true"></i> <%= u.location %></span>
+                    <span class="badge-type"><%= u.category %></span>
+                </div>
+                <p class="uni-desc"><%= u.countryName %> · <%= u.type %></p>
+                <div class="uni-card-footer">
+                    <a href="/universities/<%= u.slug %>" class="btn-v2 btn-v2-outline-light btn-v2-sm">View University</a>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+
+        <% if (result.totalPages > 1) {
+            function pageHref(p) {
+                var params = new URLSearchParams(query);
+                params.set('page', p);
+                return '/universities?' + params.toString();
+            }
+        %>
+        <nav class="pagination-v2" aria-label="Pagination">
+            <a href="<%= pageHref(Math.max(1, result.currentPage - 1)) %>" class="<%= result.currentPage === 1 ? 'disabled' : '' %>" aria-label="Previous page">&larr;</a>
+            <% for (var p = 1; p <= result.totalPages; p++) { %>
+                <% if (p === result.currentPage) { %><span class="current"><%= p %></span><% } else { %><a href="<%= pageHref(p) %>"><%= p %></a><% } %>
+            <% } %>
+            <a href="<%= pageHref(Math.min(result.totalPages, result.currentPage + 1)) %>" class="<%= result.currentPage === result.totalPages ? 'disabled' : '' %>" aria-label="Next page">&rarr;</a>
+        </nav>
+        <% } %>
+
+        <% } else { %>
+        <div class="destination-empty">
+            <h3>No matches</h3>
+            <p>Try clearing a filter or searching a different term.</p>
+        </div>
+        <% } %>
+    </div>
+</section>
+</main>
+
+<!-- Mobile filter bottom sheet — a second, touch-friendly copy of the controls above (no
+     `name` attributes, so it never double-submits); "Apply" copies its values into the real
+     form fields and submits. See public/assets/js/filters.js. -->
+<div class="filter-drawer-backdrop"></div>
+<div class="filter-sheet" role="dialog" aria-modal="true" aria-label="Filters">
+    <div class="sheet-handle"></div>
+    <div class="filter-field">
+        <label for="sheetCountry">Country</label>
+        <select id="sheetCountry" data-sync="country">
+            <option value="">All countries</option>
+            <% countryOptions.forEach(function (c) { %><option value="<%= c.slug %>"><%= c.name %></option><% }); %>
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="sheetCategory">Type</label>
+        <select id="sheetCategory" data-sync="category">
+            <option value="">All types</option>
+            <% categoryList.forEach(function (c) { %><option value="<%= c %>"><%= c %></option><% }); %>
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="sheetSort">Sort</label>
+        <select id="sheetSort" data-sync="sort">
+            <option value="">Featured</option>
+            <option value="az">A–Z</option>
+            <option value="country">Country</option>
+        </select>
+    </div>
+    <div style="display:flex; gap:0.75rem;">
+        <button type="button" class="btn-v2 btn-v2-outline-light js-close-filters" style="flex:1;">Cancel</button>
+        <button type="button" class="btn-v2 btn-v2-primary js-apply-filters" style="flex:1;">Apply filters</button>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

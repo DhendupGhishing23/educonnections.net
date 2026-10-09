@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>document.documentElement.classList.add('js');</script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#0B1F3A">
+    <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Edu Connections is an education consultancy helping students study in Australia, New Zealand, Canada and South Korea, from counselling through to visas.' %>">
+    <link rel="shortcut icon" href="/assets/images/icon.png" type="image/png">
+    <title><%= typeof title !== 'undefined' ? title + ' | Edu Connections' : 'Edu Connections' %></title>
+
+    <% var canonicalUrl = 'https://educonnections.net' + (typeof currentPath !== 'undefined' ? currentPath : '/'); %>
+    <link rel="canonical" href="<%= canonicalUrl %>">
+
+    <!-- Open Graph / social preview -->
+    <meta property="og:site_name" content="Edu Connections">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= typeof title !== 'undefined' ? title + ' | Edu Connections' : 'Edu Connections' %>">
+    <meta property="og:description" content="<%= typeof description !== 'undefined' ? description : 'Discover universities and colleges across Australia, New Zealand, Canada and South Korea with Edu Connections.' %>">
+    <meta property="og:url" content="<%= canonicalUrl %>">
+    <meta property="og:image" content="https://educonnections.net<%= typeof ogImage !== 'undefined' ? ogImage : '/assets/images/hero-background.webp' %>">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <% if (typeof heroImage !== 'undefined' && heroImage) { %>
+    <link rel="preload" as="image" href="<%= heroImage %>" fetchpriority="high">
+    <% } %>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Jost:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/fontawesome.css">
+    <link rel="stylesheet" href="/assets/css/owl.css">
+    <link rel="stylesheet" href="/lib/owlcarousel/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/refine.css">
+    <!-- 2026 redesign: layered on top of the two stylesheets above, nothing removed from them -->
+    <link rel="stylesheet" href="/assets/css/tokens.css?v=<%= assetVersion %>">
+    <link rel="stylesheet" href="/assets/css/redesign.css?v=<%= assetVersion %>">
+
+    <script type="application/ld+json">
+    <%- JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Edu Connections",
+        "url": "https://educonnections.net/",
+        "logo": "https://educonnections.net/assets/images/icon.png",
+        "email": "info@educonnections.net",
+        "sameAs": [
+            "https://www.youtube.com/@user-sk4jt3tc8r/videos",
+            "https://www.facebook.com/profile.php?id=100065481459720",
+            "https://www.instagram.com/educonnections.australia/",
+            "https://www.tiktok.com/@educonnections"
+        ],
+        "contactPoint": [
+            { "@type": "ContactPoint", "contactType": "customer service", "telephone": "+61-8-6117-4088", "email": "info@educonnections.net", "areaServed": "AU" }
+        ]
+    }) %>
+    </script>
+    <% if (typeof extraJsonLd !== 'undefined' && extraJsonLd) { %>
+    <script type="application/ld+json"><%- JSON.stringify(extraJsonLd) %></script>
+    <% } %>
+
+    <% if (typeof needsRecaptcha !== 'undefined' && needsRecaptcha) { %>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <% } %>
+</head>

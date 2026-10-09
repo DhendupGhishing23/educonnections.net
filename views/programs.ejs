@@ -1,0 +1,72 @@
+<%- include('partials/head', {
+    title: title,
+    description: description,
+    needsRecaptcha: false
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="hero-v2" style="padding: 3.5rem 0 3rem;">
+    <div class="container-v2">
+        <nav class="breadcrumb-v2" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Programs</span></nav>
+        <span class="eyebrow-v2" style="margin-top:1rem;">Fields of study</span>
+        <h1 style="color:#fff; font-size: clamp(1.9rem, 3.5vw, 2.6rem);">Programs</h1>
+        <p class="text-muted-dark" style="max-width:620px;">Browse by field to see which partner institutions teach in that area, or see specific programs real Edu Connections students have enrolled in.</p>
+    </div>
+</section>
+
+<section class="section-v2 section-light">
+    <div class="container-v2">
+        <div class="section-head align-left" style="margin-bottom:1.75rem;">
+            <span class="eyebrow-v2">Browse</span>
+            <h2>Fields of study</h2>
+        </div>
+        <div class="feature-grid-v2">
+            <% fieldCategories.forEach(function (f) { %>
+            <a href="/programs/<%= f.slug %>" class="feature-card-v2" style="text-decoration:none; color:inherit;">
+                <div class="feature-icon"><i class="fa fa-graduation-cap" aria-hidden="true"></i></div>
+                <h3><%= f.name %></h3>
+                <p><%= f.description %></p>
+            </a>
+            <% }); %>
+        </div>
+    </div>
+</section>
+
+<section class="section-v2 section-dark">
+    <div class="container-v2">
+        <div class="section-head align-left" style="margin-bottom:1.75rem;">
+            <span class="eyebrow-v2">Real student outcomes</span>
+            <h2 class="heading-gradient">Verified programs</h2>
+            <p class="text-muted-dark" style="max-width:640px;">Every program below is one a real Edu Connections client enrolled in — each links to their testimonial.</p>
+        </div>
+        <div class="uni-grid-v2">
+            <% verifiedPrograms.forEach(function (p) {
+                var inst = institutionBySlug[p.institutionSlug];
+            %>
+            <div class="uni-card-v2" style="background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.1);">
+                <h3 style="color:#fff;"><a href="/programs/<%= p.slug %>" style="color:inherit; text-decoration:none;"><%= p.name %></a></h3>
+                <div class="uni-meta-row" style="color:var(--text-on-dark-muted);">
+                    <span class="badge-type" style="background:rgba(255,255,255,0.08); color:#fff;"><%= p.level %></span>
+                    <span class="field-chip"><%= p.fieldCategory %></span>
+                </div>
+                <% if (inst) { %>
+                <p class="uni-desc" style="color:var(--text-on-dark-muted);">at <a href="/universities/<%= inst.slug %>" style="color:var(--color-accent);"><%= inst.name %></a>, <%= inst.countryName %></p>
+                <% } %>
+                <div class="uni-card-footer">
+                    <a href="/programs/<%= p.slug %>" class="btn-v2 btn-v2-outline-dark btn-v2-sm">View Details</a>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+</section>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

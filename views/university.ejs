@@ -1,0 +1,241 @@
+<%
+    var jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "CollegeOrUniversity",
+        "name": institution.name,
+        "address": { "@type": "PostalAddress", "addressLocality": institution.location, "addressCountry": institution.countryName }
+    };
+    if (institution.website) jsonLd.url = institution.website;
+%>
+<%- include('partials/head', {
+    title: institution.name,
+    description: description,
+    needsRecaptcha: false,
+    extraJsonLd: jsonLd
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="hero-v2 uni-hero">
+    <div class="container-v2">
+        <nav class="breadcrumb-v2" aria-label="Breadcrumb">
+            <a href="/">Home</a><span>/</span>
+            <a href="/destinations/<%= institution.countrySlug %>"><%= institution.countryName %></a><span>/</span>
+            <span><%= institution.name %></span>
+        </nav>
+
+        <div class="uni-hero-top">
+            <div class="uni-hero-logo"><img src="/assets/images/<%= institution.logo %>" alt="<%= institution.name %> logo"></div>
+            <div>
+                <h1><%= institution.name %></h1>
+                <div class="uni-hero-meta">
+                    <span><i class="fa fa-map-marker" aria-hidden="true"></i> <%= institution.location %>, <%= institution.countryName %></span>
+                    <span><i class="fa fa-building" aria-hidden="true"></i> <%= institution.category %></span>
+                </div>
+            </div>
+            <div class="uni-hero-actions">
+                <button type="button" class="favorite-btn btn-v2 btn-v2-outline-dark" data-slug="<%= institution.slug %>" aria-pressed="false" aria-label="Save <%= institution.name %>">
+                    <i class="far fa-heart" aria-hidden="true"></i> Save
+                </button>
+                <button type="button" class="btn-v2 btn-v2-outline-dark js-share-btn" data-title="<%= institution.name %>">
+                    <i class="fa fa-share-alt" aria-hidden="true"></i> Share
+                </button>
+                <% if (institution.website) { %>
+                <a href="<%= institution.website %>" target="_blank" rel="noopener" class="btn-v2 btn-v2-primary">Visit University Website</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-v2 section-light" style="padding-top:3rem;">
+    <div class="container-v2">
+        <div class="info-grid-2" style="margin-bottom:1.5rem;">
+            <div class="info-card">
+                <h2><i class="fa fa-info-circle" aria-hidden="true"></i> About</h2>
+                <p style="color:var(--text-on-light-muted); line-height:1.7; margin-bottom:1.25rem;">
+                    <%= institution.name %> is a <%= institution.type.toLowerCase() %> in <%= institution.location %>, <%= institution.countryName %>, and one of Edu Connections' verified partner institutions.
+                </p>
+                <dl style="margin:0;">
+                    <div class="info-row"><dt>Type</dt><dd><%= institution.type %></dd></div>
+                    <div class="info-row"><dt>Category</dt><dd><%= institution.category %></dd></div>
+                    <div class="info-row"><dt>City</dt><dd><%= institution.location %></dd></div>
+                    <div class="info-row"><dt>Country</dt><dd><a href="/destinations/<%= institution.countrySlug %>"><%= institution.countryName %></a></dd></div>
+                    <div class="info-row"><dt>Official website</dt><dd><% if (institution.website) { %><a href="<%= institution.website %>" target="_blank" rel="noopener"><%= institution.website.replace(/^https?:\/\//, '').replace(/\/$/, '') %></a><% } else { %><span class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> Information unavailable</span><% } %></dd></div>
+                </dl>
+            </div>
+
+            <div class="info-card">
+                <h2><i class="fa fa-map-marker" aria-hidden="true"></i> Location</h2>
+                <p style="color:var(--text-on-light-muted); margin-bottom:1rem;"><%= institution.location %>, <%= institution.countryName %></p>
+                <div class="map-link-card">
+                    <span>View on the map</span>
+                    <a href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(institution.name + ', ' + institution.location) %>" target="_blank" rel="noopener">
+                        Open in Google Maps <svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                </div>
+                <p style="font-size:0.8rem; color:var(--text-on-light-faint); margin-top:0.75rem;">We don't hold precise campus coordinates for every partner, so this opens a map search rather than a pinned location.</p>
+            </div>
+        </div>
+
+        <div class="info-grid-2" style="margin-bottom:1.5rem;">
+            <div class="info-card">
+                <h2><i class="fa fa-graduation-cap" aria-hidden="true"></i> Programs</h2>
+                <% if (relatedPrograms.length) { %>
+                <p style="color:var(--text-on-light-muted); font-size:0.9rem; margin-bottom:1rem;">Real programs Edu Connections has placed students into at this institution:</p>
+                <ul style="padding-left:1.1rem; margin:0 0 1rem; display:flex; flex-direction:column; gap:0.5rem;">
+                    <% relatedPrograms.forEach(function (p) { %>
+                    <li><a href="/programs/<%= p.slug %>"><%= p.name %></a> <span style="color:var(--text-on-light-faint); font-size:0.85rem;">(<%= p.level %>)</span></li>
+                    <% }); %>
+                </ul>
+                <% } %>
+                <% if (institution.details && institution.details.programs && institution.details.programs.length) { %>
+                <p style="color:var(--text-on-light-muted); font-size:0.9rem; margin-bottom:0.5rem;">Main program areas at <%= institution.name %>:</p>
+                <ul style="padding-left:1.1rem; margin:0 0 1rem; display:flex; flex-direction:column; gap:0.45rem;">
+                    <% institution.details.programs.forEach(function (area) { %>
+                    <li style="font-size:0.9rem; color:var(--text-on-light-muted);"><strong style="color:var(--text-on-light);"><%= area.area %>:</strong> <%= area.examples.join(', ') %></li>
+                    <% }); %>
+                </ul>
+                <p class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> This is a curated overview, not the complete list
+                    <% if (institution.website) { %> — see <a href="<%= institution.website %>" target="_blank" rel="noopener">their official website</a> for every program.<% } else { %> — see their official website for every program.<% } %>
+                </p>
+                <% } else { %>
+                <p class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> We don't hold a full course catalogue for this institution
+                    <% if (institution.website) { %> — see <a href="<%= institution.website %>" target="_blank" rel="noopener">their official website</a> for the complete list of programs.<% } else { %> — see their official website for the complete list of programs.<% } %>
+                </p>
+                <% } %>
+            </div>
+
+            <div class="info-card">
+                <h2><i class="fa fa-plane" aria-hidden="true"></i> International Students</h2>
+                <p style="color:var(--text-on-light-muted); font-size:0.9rem; margin-bottom:1rem;">Edu Connections supports international students applying here with:</p>
+                <ul class="tag-list">
+                    <li class="tag"><a href="/services#student-visa-application" style="color:inherit; text-decoration:none;">Student visa application</a></li>
+                    <li class="tag"><a href="/services#overseas-health-insurance" style="color:inherit; text-decoration:none;">Overseas health insurance</a></li>
+                    <li class="tag"><a href="/services#airport-pick-up" style="color:inherit; text-decoration:none;">Airport pick-up</a></li>
+                    <% if (institution.countrySlug === 'australia') { %><li class="tag"><a href="/services#485-visa-application" style="color:inherit; text-decoration:none;">485 visa (post-study)</a></li><% } %>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-grid-2" style="margin-bottom:0.75rem;">
+            <div class="info-card">
+                <h2><i class="fa fa-clipboard" aria-hidden="true"></i> Admissions</h2>
+                <div class="detail-block">
+                    <h4>Entry requirements</h4>
+                    <% if (institution.details && institution.details.entryRequirements) { %>
+                    <p><%= institution.details.entryRequirements %></p>
+                    <% } else { %>
+                    <p class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> Information unavailable</p>
+                    <% } %>
+                </div>
+                <div class="detail-block">
+                    <h4>Application deadlines</h4>
+                    <% if (institution.details && institution.details.applicationDeadlines) { %>
+                    <p><%= institution.details.applicationDeadlines %></p>
+                    <% } else { %>
+                    <p class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> Information unavailable</p>
+                    <% } %>
+                </div>
+                <div class="detail-block">
+                    <h4>English requirements</h4>
+                    <% if (institution.details && institution.details.englishRequirements) { %>
+                    <p><%= institution.details.englishRequirements %></p>
+                    <% } else { %>
+                    <p class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> Information unavailable</p>
+                    <% } %>
+                </div>
+                <p style="font-size:0.85rem; color:var(--text-on-light-muted); margin-top:1rem;">These vary by program and change often — a counsellor can confirm current requirements for you. <a href="/checkyoureligibility">Check your eligibility →</a></p>
+            </div>
+            <div class="info-card">
+                <h2><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Tuition &amp; Costs</h2>
+                <div class="detail-block">
+                    <h4>Tuition</h4>
+                    <% if (institution.details && institution.details.tuition) { %>
+                    <p><%= institution.details.tuition %></p>
+                    <% } else { %>
+                    <p class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> Information unavailable</p>
+                    <% } %>
+                </div>
+                <div class="detail-block">
+                    <h4>Estimated living costs</h4>
+                    <% if (institution.details && institution.details.livingCosts) { %>
+                    <p><%= institution.details.livingCosts %></p>
+                    <% } else { %>
+                    <p class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> Information unavailable</p>
+                    <% } %>
+                </div>
+                <div class="detail-block">
+                    <h4>Other fees</h4>
+                    <% if (institution.details && institution.details.otherFees) { %>
+                    <p><%= institution.details.otherFees %></p>
+                    <% } else { %>
+                    <p class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> Information unavailable</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <% if (institution.details) { %>
+        <p style="font-size:0.8rem; color:var(--text-on-light-faint); margin:0 0 1.5rem;"><i class="fa fa-check-circle" aria-hidden="true" style="color:var(--color-accent);"></i> Sourced directly from <%= institution.name %>'s official website · verified <%= institution.details.asOf %> · figures change often, so always confirm current details with a counsellor before applying.<% if (institution.details.notes) { %> <%= institution.details.notes %><% } %></p>
+        <% } %>
+
+        <% if (relatedTestimonials.length) { %>
+        <div class="info-card" style="margin-bottom:1.5rem;">
+            <h2><i class="fa fa-quote-left" aria-hidden="true"></i> Student stories from <%= institution.name %></h2>
+            <div style="margin-top:0.5rem;">
+                <% relatedTestimonials.forEach(function (t) { %>
+                <div class="story-item">
+                    <i class="fa fa-quote-left story-quote-mark" aria-hidden="true"></i>
+                    <p class="story-text">"<%= t.quote %>"</p>
+                    <div class="story-person">
+                        <img src="/assets/images/<%= t.avatar %>" alt="" class="story-avatar" width="48" height="48" loading="lazy">
+                        <div>
+                            <h5><%= t.name %></h5>
+                            <span><%= t.role %></span>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+        <% } %>
+
+        <div class="info-card" style="text-align:center;">
+            <h2 style="justify-content:center;"><i class="fa fa-comments" aria-hidden="true"></i> Ready to apply to <%= institution.name %>?</h2>
+            <p style="color:var(--text-on-light-muted); max-width:480px; margin:0 auto 1.5rem;">Our counsellors can confirm current entry requirements, tuition and deadlines directly and guide you through the whole application.</p>
+            <div class="hero-cta-row" style="justify-content:center;">
+                <a href="/checkyoureligibility" class="btn-v2 btn-v2-primary">Check Your Eligibility</a>
+                <% if (institution.website) { %><a href="<%= institution.website %>" target="_blank" rel="noopener" class="btn-v2 btn-v2-outline-light">Visit University Website</a><% } %>
+            </div>
+        </div>
+    </div>
+</section>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+<script>
+    (function () {
+        var btn = document.querySelector('.js-share-btn');
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            var shareData = { title: btn.getAttribute('data-title') + ' | Edu Connections', url: window.location.href };
+            if (navigator.share) {
+                navigator.share(shareData).catch(function () { /* user cancelled - nothing to do */ });
+                return;
+            }
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(window.location.href).then(function () {
+                    var original = btn.innerHTML;
+                    btn.innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> Link copied';
+                    setTimeout(function () { btn.innerHTML = original; }, 1800);
+                });
+            }
+        });
+    })();
+</script>
+</body>
+</html>

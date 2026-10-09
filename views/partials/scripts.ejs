@@ -1,0 +1,21 @@
+<!-- Core scripts (trimmed: isotope, lightbox, slick-slider, tabs.js, counterup, waypoints and wow.js
+     were removed - none of them were actually used anywhere on the site, they were just dead
+     weight slowing every page load down) -->
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/lib/easing/easing.min.js"></script>
+<script src="/lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="/assets/js/reveal.js" defer></script>
+<!-- custom.js is legacy theme code, unlike the redesign scripts below, but it's now
+     watched/version-stamped the same way (see server.js) since it was hitting the exact
+     "my edit isn't showing up" static-cache staleness the redesign scripts were fixed for. -->
+<script src="/assets/js/custom.js?v=<%= assetVersion %>"></script>
+
+<!-- 2026 redesign: small, dependency-free, and each one no-ops if its markup isn't on the
+     current page, so it's safe to load sitewide instead of wiring up per-page includes. -->
+<script src="/assets/js/utils.js?v=<%= assetVersion %>" defer></script>
+<script src="/assets/js/nav.js?v=<%= assetVersion %>" defer></script>
+<script src="/assets/js/search.js?v=<%= assetVersion %>" defer></script>
+<script src="/assets/js/filters.js?v=<%= assetVersion %>" defer></script>
+<script src="/assets/js/worldmap.js?v=<%= assetVersion %>" defer></script>
+<script src="/assets/js/favorites.js?v=<%= assetVersion %>" defer></script>

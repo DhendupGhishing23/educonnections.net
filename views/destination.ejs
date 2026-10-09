@@ -1,0 +1,134 @@
+<%- include('partials/head', {
+    title: destination.name,
+    description: 'Universities and colleges Edu Connections partners with in ' + destination.name + '.',
+    needsRecaptcha: false,
+    extraJsonLd: {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://educonnections.net/" },
+            { "@type": "ListItem", "position": 2, "name": "Countries", "item": "https://educonnections.net/destinations" },
+            { "@type": "ListItem", "position": 3, "name": destination.name, "item": "https://educonnections.net/destinations/" + slug }
+        ]
+    }
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="hero-v2" style="padding: 3rem 0 3.5rem;">
+    <div class="container-v2">
+        <nav class="breadcrumb-v2" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/destinations">Countries</a><span>/</span><span><%= destination.name %></span></nav>
+        <span class="eyebrow-v2" style="margin-top:1rem;">Study in</span>
+        <h1 style="color:#fff; font-size: clamp(2rem, 4vw, 2.9rem);"><%= destination.name %></h1>
+        <p class="text-muted-dark" style="max-width:640px; font-size:1.05rem;"><%= destination.overview %></p>
+
+        <div class="hero-trust-row" style="margin-top:1.5rem;">
+            <span><strong><%= destination.universities.length %></strong> partner institution<%= destination.universities.length === 1 ? '' : 's' %></span>
+            <% if (destination.popularFields.length) { %><span><strong><%= destination.popularFields.length %></strong> popular fields</span><% } %>
+        </div>
+    </div>
+</section>
+
+<% if (destination.whyStudy.length) { %>
+<section class="section-v2 section-light section-v2-tight">
+    <div class="container-v2">
+        <div class="info-grid-2">
+            <div class="info-card">
+                <h2><i class="fa fa-star" aria-hidden="true"></i> Why study in <%= destination.name %></h2>
+                <ul style="padding-left:1.1rem; margin:0; display:flex; flex-direction:column; gap:0.6rem; color: var(--text-on-light-muted); font-size:0.94rem; line-height:1.55;">
+                    <% destination.whyStudy.forEach(function (w) { %><li><%= w %></li><% }); %>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h2><i class="fa fa-info-circle" aria-hidden="true"></i> Student information</h2>
+                <dl style="margin:0;">
+                    <div class="info-row"><dt>Popular fields</dt><dd><%= destination.popularFields.length ? destination.popularFields.join(', ') : 'Information unavailable' %></dd></div>
+                    <div class="info-row"><dt>Tuition &amp; cost of living</dt><dd><span class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> Varies by institution — ask your counsellor</span></dd></div>
+                    <div class="info-row"><dt>Visa support</dt><dd><a href="/services#student-visa-application">Student visa service →</a></dd></div>
+                    <div class="info-row"><dt>Health insurance</dt><dd><a href="/services#overseas-health-insurance">Overseas health insurance →</a></dd></div>
+                </dl>
+            </div>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<section class="section-v2 section-light" style="padding-top: <%= destination.whyStudy.length ? '0' : '3rem' %>;">
+    <div class="container-v2">
+        <div class="section-head align-left" style="margin-bottom:1.5rem;">
+            <span class="eyebrow-v2">Discover</span>
+            <h2>Universities &amp; colleges in <%= destination.name %></h2>
+        </div>
+
+        <% if (destination.universities.length) {
+            var categories = Array.from(new Set(destination.universities.map(function (u) { return u.category; }))).sort();
+        %>
+        <div class="listing-toolbar">
+            <div class="toolbar-search">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <input type="search" id="countryFilterSearch" placeholder="Search by name, city or type..." aria-label="Search institutions in <%= destination.name %>">
+            </div>
+            <div class="filter-group" style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                <select id="countryFilterCategory" aria-label="Filter by type">
+                    <option value="">All types</option>
+                    <% categories.forEach(function (c) { %><option value="<%= c %>"><%= c %></option><% }); %>
+                </select>
+                <select id="countryFilterSort" aria-label="Sort">
+                    <option value="default">Sort: Featured</option>
+                    <option value="az">Sort: A–Z</option>
+                    <option value="type">Sort: Type</option>
+                </select>
+            </div>
+        </div>
+        <div class="listing-meta">
+            <span class="js-results-count"><%= destination.universities.length %> institutions</span>
+        </div>
+
+        <div class="uni-grid-v2 js-institution-grid">
+            <% destination.universities.forEach(function(u) { %>
+            <div class="uni-card-v2 js-institution-card" data-name="<%= u.name %>" data-location="<%= u.location %>" data-type="<%= u.type %>" data-category="<%= u.category %>">
+                <div class="uni-card-top">
+                    <div class="uni-logo-wrap"><img src="/assets/images/<%= u.logo %>" loading="lazy" decoding="async" alt="<%= u.name %> logo"></div>
+                    <button type="button" class="favorite-btn" data-slug="<%= u.slug %>" aria-pressed="false" aria-label="Save <%= u.name %>"><i class="far fa-heart" aria-hidden="true"></i></button>
+                </div>
+                <h3><a href="/universities/<%= u.slug %>" style="color:inherit; text-decoration:none;"><%= u.name %></a></h3>
+                <div class="uni-meta-row">
+                    <span><i class="fa fa-map-marker" aria-hidden="true"></i> <%= u.location %></span>
+                    <span class="badge-type"><%= u.category %></span>
+                </div>
+                <p class="uni-desc"><%= u.type %></p>
+                <div class="uni-card-footer">
+                    <a href="/universities/<%= u.slug %>" class="btn-v2 btn-v2-outline-light btn-v2-sm">View University</a>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+
+        <div style="display:none; text-align:center; padding:3rem 0; color:var(--text-on-light-muted);" class="js-filter-empty">
+            No institutions match those filters. Try clearing the search or type filter.
+        </div>
+
+        <div style="text-align:center; margin-top:2rem;">
+            <button type="button" class="btn-v2 btn-v2-outline-light js-load-more" style="display:none;">Load more</button>
+        </div>
+
+        <% } else { %>
+        <div class="destination-empty">
+            <h3>Universities coming soon</h3>
+            <p>We're expanding our global university database for <%= destination.name %>. Get in touch and we'll help you directly with current options.</p>
+            <div class="cta-row" style="margin-top:1rem;">
+                <a href="/#contact-us" class="btn-v2 btn-v2-primary">Contact Us</a>
+            </div>
+        </div>
+        <% } %>
+    </div>
+</section>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

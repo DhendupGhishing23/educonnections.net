@@ -1,0 +1,566 @@
+<%- include('partials/head', {
+    title: 'Home',
+    description: 'Discover universities and colleges across Australia, New Zealand, Canada and South Korea, and get personal guidance from Edu Connections at every step.',
+    needsRecaptcha: true,
+    heroImage: '/assets/images/hero-background.webp'
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+
+<!-- ***** Hero ***** -->
+<section class="hero-v2" id="top">
+    <div class="container-v2">
+        <div class="hero-v2-grid">
+            <div>
+                <span class="eyebrow-v2">Global education, made discoverable</span>
+                <h1>Discover Your Future.<br>Study Anywhere.</h1>
+                <p class="lede">Explore universities, countries, programs and opportunities around the world — all in one place, guided by a real Edu Connections counsellor from your first search to your visa.</p>
+
+                <div class="hero-search-wrap">
+                    <form class="search-field" role="search" action="/universities" method="get" data-live-search>
+                        <i class="fa fa-search search-icon" aria-hidden="true"></i>
+                        <input type="search" name="q" class="js-search-input" placeholder="Search universities, countries, programs..." autocomplete="off" aria-label="Search universities, countries, programs">
+                        <button type="submit" class="search-submit">Search</button>
+                    </form>
+                    <div class="search-results-panel" role="region" aria-label="Search results"></div>
+                </div>
+
+                <div class="hero-cta-row">
+                    <a href="/universities" class="btn-v2 btn-v2-primary">Explore Universities</a>
+                    <a href="/destinations" class="btn-v2 btn-v2-outline-dark">Explore Countries</a>
+                </div>
+
+                <div class="hero-trust-row">
+                    <span><strong><%= Object.keys(destinations).length %></strong> study destinations</span>
+                    <span><strong><%= Object.values(destinations).reduce((n, d) => n + d.universities.length, 0) %>+</strong> partner institutions</span>
+                    <span><strong>2</strong> Australian offices (Perth &amp; Brisbane)</span>
+                </div>
+            </div>
+
+            <div>
+                <!-- Real, recognisable continent shapes (not a stylised wireframe): the paths
+                     below come from data/worldGeo.js, precomputed from actual Natural Earth
+                     country boundaries so this is a genuine (low-detail) world map, not a
+                     drawing. The map is rendered twice side by side and scrolled with CSS
+                     (see .globe-strip in redesign.css) so it reads as a slowly spinning globe
+                     through a circular window, with the seam invisible because tile 2 starts
+                     exactly where tile 1's 180° edge ends. -->
+                <div class="world-map-card">
+                    <div class="globe-viewport">
+                        <div class="globe-shading" aria-hidden="true"></div>
+                        <svg class="globe-strip" viewBox="0 0 <%= worldGeo.width * 2 %> <%= worldGeo.height %>" role="img" aria-label="Slowly rotating globe highlighting Edu Connections study destinations">
+                            <defs>
+                                <linearGradient id="globeHighlightGradient" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#4DD9DE"></stop>
+                                    <stop offset="100%" stop-color="#1769E0"></stop>
+                                </linearGradient>
+                                <linearGradient id="globeOceanGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#123a63"></stop>
+                                    <stop offset="55%" stop-color="#0a2847"></stop>
+                                    <stop offset="100%" stop-color="#0B1F3A"></stop>
+                                </linearGradient>
+                            </defs>
+                            <rect class="globe-ocean" x="0" y="0" width="<%= worldGeo.width * 2 %>" height="<%= worldGeo.height %>"></rect>
+                            <% [0, worldGeo.width].forEach(function (tileOffset) { %>
+                            <g transform="translate(<%= tileOffset %>, 0)">
+                                <path class="globe-land" d="<%= worldGeo.basePath %>"></path>
+                                <% Object.keys(worldGeo.highlightPaths).forEach(function (hSlug) { %>
+                                <path class="globe-highlight" d="<%= worldGeo.highlightPaths[hSlug] %>"></path>
+                                <% }); %>
+                                <path class="globe-graticule" d="<%= worldGeo.graticulePath %>"></path>
+                                <% /* New Zealand sits only ~14deg from the tile seam, so a
+                                      right-side label would run off-circle (or into the next
+                                      tile copy) far more often than the others as it rotates
+                                      through - flip it to the left; everyone else labels to
+                                      the right. */
+                                   var LEFT_LABEL = { 'new-zealand': true };
+                                %>
+                                <% Object.keys(destinations).forEach(function (slug) {
+                                    var d = destinations[slug];
+                                    var pos = worldGeo.pins[slug];
+                                    if (!pos) return;
+                                    var label = d.universities.length + (d.universities.length === 1 ? ' partner institution' : '+ partner institutions');
+                                    var toLeft = LEFT_LABEL[slug];
+                                %>
+                                <g class="map-hotspot" data-slug="<%= slug %>" data-name="<%= d.name %>" data-count="<%= d.universities.length %>" tabindex="0" role="link" aria-label="<%= d.name %> — <%= d.universities.length ? label : 'partner institutions coming soon' %>">
+                                    <circle class="hotspot-ring" cx="<%= pos.x %>" cy="<%= pos.y %>" r="9"></circle>
+                                    <circle class="hotspot-dot" cx="<%= pos.x %>" cy="<%= pos.y %>" r="5"></circle>
+                                    <text class="globe-label" text-anchor="<%= toLeft ? 'end' : 'start' %>" x="<%= pos.x + (toLeft ? -13 : 13) %>" y="<%= pos.y + 5 %>"><%= worldGeo.labels[slug] %></text>
+                                </g>
+                                <% }); %>
+                            </g>
+                            <% }); %>
+                        </svg>
+                    </div>
+                    <div class="map-tooltip" role="status" aria-live="polite"></div>
+                    <div class="map-legend">
+                        <% Object.keys(destinations).forEach(function (slug) { %>
+                        <span><span class="legend-dot"></span><%= destinations[slug].name %></span>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ***** Explore Countries (also this site's "popular destinations" - with only 4
+     real destinations today, a separate "popular" strip above this would just repeat the
+     same 4 cards, so they're combined into one honest section rather than padded out) ***** -->
+<section class="section-v2 section-light" id="destinations">
+    <div class="container-v2">
+        <div class="section-head">
+            <span class="eyebrow-v2">Where you can study</span>
+            <h2>Explore countries</h2>
+            <p class="text-muted-light">Every destination below is a country we actively place students in today. Click through to see the real partner institutions in each one.</p>
+        </div>
+        <div class="country-grid-v2">
+            <% Object.keys(destinations).forEach(function (slug) { var d = destinations[slug]; %>
+            <a class="country-card-v2" href="/destinations/<%= slug %>">
+                <div class="card-media">
+                    <img src="/assets/images/<%= d.flag %>" width="900" height="600" loading="lazy" decoding="async" alt="<%= d.name %> flag">
+                    <span class="flag-badge"><img src="/assets/images/<%= d.flag %>" alt="" loading="lazy"></span>
+                </div>
+                <div class="card-body">
+                    <h3><%= d.name %></h3>
+                    <span class="card-count"><%= d.universities.length ? d.universities.length + '+ partner institutions' : 'Institutions coming soon' %></span>
+                    <p class="card-desc"><%= d.tagline %></p>
+                    <% if (d.popularFields.length) { %>
+                    <div class="field-chip-list">
+                        <% d.popularFields.slice(0, 2).forEach(function (f) { %><span class="field-chip"><%= f %></span><% }); %>
+                    </div>
+                    <% } %>
+                    <span class="card-cta">Explore <%= d.name %> <svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="20" y2="12"></line><polyline points="14 5 21 12 14 19"></polyline></svg></span>
+                </div>
+            </a>
+            <% }); %>
+        </div>
+    </div>
+</section>
+
+<!-- ***** Featured universities ***** -->
+<section class="section-v2 section-dark">
+    <div class="container-v2">
+        <div class="section-head">
+            <span class="eyebrow-v2">A few of our partners</span>
+            <h2 class="heading-gradient">Featured universities &amp; colleges</h2>
+            <p class="text-muted-dark">A sample of the institutions we place students at — see the full list in <a href="/universities" style="color:#fff; text-decoration:underline;">Universities</a>.</p>
+        </div>
+        <div class="uni-grid-v2">
+            <% featuredInstitutions.forEach(function (u) { %>
+            <div class="uni-card-v2">
+                <div class="uni-card-top">
+                    <div class="uni-logo-wrap"><img src="/assets/images/<%= u.logo %>" loading="lazy" decoding="async" alt="<%= u.name %> logo"></div>
+                    <button type="button" class="favorite-btn" data-slug="<%= u.slug %>" aria-pressed="false" aria-label="Save <%= u.name %>"><i class="far fa-heart" aria-hidden="true"></i></button>
+                </div>
+                <h3><a href="/universities/<%= u.slug %>" style="color:inherit; text-decoration:none;"><%= u.name %></a></h3>
+                <div class="uni-meta-row">
+                    <span><i class="fa fa-map-marker" aria-hidden="true"></i> <%= u.location %></span>
+                    <span class="badge-type"><%= u.category %></span>
+                </div>
+                <p class="uni-desc"><%= u.countryName %> · <%= u.type %></p>
+                <div class="uni-card-footer">
+                    <a href="/universities/<%= u.slug %>" class="btn-v2 btn-v2-outline-light btn-v2-sm">View University</a>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+</section>
+
+<!-- ***** Popular programs ***** -->
+<section class="section-v2 section-light">
+    <div class="container-v2">
+        <div class="section-head">
+            <span class="eyebrow-v2">Fields of study</span>
+            <h2>Popular programs</h2>
+            <p class="text-muted-light">Browse by field to see which of our partner institutions teach in that area.</p>
+        </div>
+        <div class="feature-grid-v2">
+            <% fieldCategories.forEach(function (f) { %>
+            <a href="/programs/<%= f.slug %>" class="feature-card-v2" style="text-decoration:none; color:inherit;">
+                <div class="feature-icon"><i class="fa fa-graduation-cap" aria-hidden="true"></i></div>
+                <h3><%= f.name %></h3>
+                <p><%= f.description %></p>
+            </a>
+            <% }); %>
+        </div>
+        <div class="view-all-cta"><a href="/programs">View All Programs</a></div>
+    </div>
+</section>
+
+<!-- ***** How EduConnections works ***** -->
+<section class="section-v2 section-dark process-v2">
+    <div class="container-v2">
+        <div class="section-head reveal" data-reveal>
+            <span class="eyebrow-v2">The process</span>
+            <h2 class="heading-gradient">How Edu Connections works</h2>
+            <p class="text-muted-dark">The same five steps every student goes through, from first enquiry to landing at your destination.</p>
+        </div>
+        <div class="stepper-v2">
+            <div class="stepper-track reveal" data-reveal data-reveal-delay="0.1s" aria-hidden="true"><span class="stepper-track-fill"></span></div>
+            <div class="timeline-v2">
+                <div class="timeline-step reveal" data-reveal data-reveal-delay="0.05s">
+                    <div class="step-number">1</div>
+                    <h3>Enquire</h3>
+                    <p>Tell us your goals via our search, eligibility check or a free consultation.</p>
+                </div>
+                <div class="timeline-step reveal" data-reveal data-reveal-delay="0.2s">
+                    <div class="step-number">2</div>
+                    <h3>Counselling</h3>
+                    <p>A counsellor reviews your background and shortlists real institutions that fit.</p>
+                </div>
+                <div class="timeline-step reveal" data-reveal data-reveal-delay="0.35s">
+                    <div class="step-number">3</div>
+                    <h3>Apply</h3>
+                    <p>We manage admissions - applications, documents and offer follow-up.</p>
+                </div>
+                <div class="timeline-step reveal" data-reveal data-reveal-delay="0.5s">
+                    <div class="step-number">4</div>
+                    <h3>Visa &amp; insurance</h3>
+                    <p>We guide your student visa application and overseas health insurance.</p>
+                </div>
+                <div class="timeline-step reveal" data-reveal data-reveal-delay="0.65s">
+                    <div class="step-number">5</div>
+                    <h3>Arrive &amp; settle</h3>
+                    <p>Airport pick-up and orientation so your first days abroad are stress-free.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About us -->
+<section class="section-v2 section-light about-us" id="about-us">
+    <div class="container-v2">
+        <div class="section-head reveal" data-reveal>
+            <span class="eyebrow-v2">About Us</span>
+            <h2>Edu Connections</h2>
+        </div>
+        <div class="about-grid">
+            <div class="about-media reveal" data-reveal>
+                <div class="about-media-glow" aria-hidden="true"></div>
+                <div class="about-media-frame">
+                    <img src="/assets/images/sydney-opera-house.webp"
+                         width="1100" height="619"
+                         loading="lazy" decoding="async"
+                         alt="Sydney Opera House, Australia">
+                </div>
+                <div class="about-media-badge">
+                    <span class="about-media-badge-icon"><i class="fa fa-graduation-cap" aria-hidden="true"></i></span>
+                    <div>
+                        <strong><%= Object.values(destinations).reduce((n, d) => n + d.universities.length, 0) %>+</strong>
+                        <span>Partner institutions</span>
+                    </div>
+                </div>
+            </div>
+            <div class="about-content reveal" data-reveal>
+                <h3 class="about-content-title">Your Trusted Partner in Education Consultancy</h3>
+                <div class="about-block">
+                    <div class="about-block-icon"><i class="fa fa-users" aria-hidden="true"></i></div>
+                    <div>
+                        <h4>Who are we?</h4>
+                        <p>We are a dedicated education consultancy committed to guiding individuals towards their academic goals. With personalized strategies and unwavering support, we illuminate the path to educational excellence, helping students thrive in their unique journey of learning and growth.</p>
+                    </div>
+                </div>
+                <div class="about-block">
+                    <div class="about-block-icon"><i class="fa fa-bullseye" aria-hidden="true"></i></div>
+                    <div>
+                        <h4>Vision &amp; Mission</h4>
+                        <p>At Edu Connections, we inspire individuals to excel and contribute globally through transformative education. Our mission is to empower students with personalized guidance, fostering a love for learning, and providing comprehensive support. Through innovation and unwavering commitment, we cultivate confident, well-rounded individuals prepared for success in an ever-evolving world</p>
+                    </div>
+                </div>
+                <div class="about-block">
+                    <div class="about-block-icon"><i class="fa fa-flag" aria-hidden="true"></i></div>
+                    <div>
+                        <h4>Objectives</h4>
+                        <p>We aim to guide each student personally, fostering academic excellence through innovation. Our mission includes preparing students for success in a globalized world, emphasizing holistic development and community engagement. Committed to staying at the forefront of educational innovation, we ensure measurable and positive outcomes for every individual we guide.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ***** Why students use EduConnections + the numbers behind it (merged: one
+     full-page navy section instead of two, now that both share the same background) ***** -->
+<section class="section-v2 section-brand">
+    <div class="container-v2">
+        <div class="section-head reveal" data-reveal>
+            <span class="eyebrow-v2">Why students choose us</span>
+            <h2>Built around real support, not just listings</h2>
+        </div>
+        <div class="feature-grid-v2">
+            <div class="feature-card-v2 reveal" data-reveal data-reveal-delay="0.05s">
+                <div class="feature-icon"><i class="fa fa-user" aria-hidden="true"></i></div>
+                <h3>Personal counselling</h3>
+                <p>Every student gets one-on-one guidance matched to their background and goals, not a generic list.</p>
+            </div>
+            <div class="feature-card-v2 reveal" data-reveal data-reveal-delay="0.2s">
+                <div class="feature-icon"><i class="fa fa-plane" aria-hidden="true"></i></div>
+                <h3>Visa &amp; insurance handled</h3>
+                <p>Student visa applications, the 485 visa and overseas health insurance are all part of our service, not an afterthought.</p>
+            </div>
+            <div class="feature-card-v2 reveal" data-reveal data-reveal-delay="0.35s">
+                <div class="feature-icon"><i class="fa fa-building" aria-hidden="true"></i></div>
+                <h3>Two physical offices</h3>
+                <p>Real offices in Perth and Brisbane, not just a contact form - you can speak to a person.</p>
+            </div>
+        </div>
+        <div class="stats-divider reveal" data-reveal data-reveal-delay="0.1s" aria-hidden="true"></div>
+        <div class="stats-grid">
+            <div class="stat-card reveal" data-reveal data-reveal-delay="0.05s">
+                <i class="fa fa-globe stat-icon" aria-hidden="true"></i>
+                <span class="stat-number count-digit"><%= Object.keys(destinations).length %></span>
+                <span class="stat-label">Study destinations</span>
+            </div>
+            <div class="stat-card reveal" data-reveal data-reveal-delay="0.15s">
+                <i class="fa fa-university stat-icon" aria-hidden="true"></i>
+                <span class="stat-number count-digit"><%= Object.values(destinations).reduce((n, d) => n + d.universities.length, 0) %></span>
+                <span class="stat-label">Partner institutions</span>
+            </div>
+            <div class="stat-card reveal" data-reveal data-reveal-delay="0.25s">
+                <i class="fa fa-cogs stat-icon" aria-hidden="true"></i>
+                <span class="stat-number count-digit"><%= services.length %></span>
+                <span class="stat-label">Core services</span>
+            </div>
+            <div class="stat-card reveal" data-reveal data-reveal-delay="0.35s">
+                <i class="fa fa-building stat-icon" aria-hidden="true"></i>
+                <span class="stat-number count-digit">2</span>
+                <span class="stat-label">Offices (Perth &amp; Brisbane)</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--our service -->
+<section class="our-service section-light" id="our-service">
+    <div class="our_room">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="reveal" data-reveal>
+                        <p class="section-title text-secondary justify-content-center"><span></span>Our
+                            Services<span></span></p>
+                        <h1 class="text-center mb-5">Checkout our services</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <% services.forEach(function(service, i) { %>
+                <div class="col-md-4 col-sm-6">
+                    <div id="serv_hover" class="room reveal" data-reveal data-reveal-delay="<%= (i % 3) * 0.1 %>s">
+                        <a class="room-link" href="/services#<%= service.slug %>">
+                            <div class="room_img">
+                                <figure><img src="/assets/images/<%= service.image %>" width="720" height="480" loading="lazy" decoding="async" alt="<%= service.title %>"/></figure>
+                            </div>
+                            <div class="bed_room">
+                                <h3><%= service.title %></h3>
+                                <p><%= service.summary %></p>
+                                <span class="room-cta">Learn more <svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="20" y2="12"></line><polyline points="14 5 21 12 14 19"></polyline></svg></span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+            <div class="view-all-cta reveal" data-reveal>
+                <a href="/services">View All Services</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end service -->
+
+<!-- ***** Partner institutions logo strip (merged: one section, one background,
+     instead of a white heading block sitting directly on a different-shade carousel) ***** -->
+<section class="services" id="partner">
+    <div class="container-v2">
+        <div class="section-head reveal" data-reveal>
+            <span class="eyebrow-v2">Our partners</span>
+            <h2>Partner Institutions</h2>
+            <p class="text-muted-light">A selection of the real institutions we work with, across every destination.</p>
+        </div>
+        <div class="owl-service-item owl-carousel">
+            <% partnerLogos.forEach(function(logo) { %>
+            <div class="item">
+                <div class="down-content">
+                    <img src="/assets/images/<%= logo %>" loading="lazy" decoding="async" alt="">
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+</section>
+
+<!--Partner ends here -->
+<!-- ***** Testimonials ***** -->
+<section id="testimonial" class="section-v2 section-light">
+    <div class="container-v2">
+        <div class="section-head reveal" data-reveal>
+            <span class="eyebrow-v2">Testimonial</span>
+            <h2>What Our Clients Say</h2>
+        </div>
+        <div class="owl-carousel testimonial-carousel">
+            <% testimonials.forEach(function(t) { %>
+            <div class="testimonial-item">
+                <i class="fa fa-quote-left quote-mark" aria-hidden="true"></i>
+                <div class="stars" aria-label="5 out of 5 stars">
+                    <i class="fa fa-star" aria-hidden="true"></i><i class="fa fa-star" aria-hidden="true"></i><i class="fa fa-star" aria-hidden="true"></i><i class="fa fa-star" aria-hidden="true"></i><i class="fa fa-star" aria-hidden="true"></i>
+                </div>
+                <p class="testimonial-text"><%= t.quote %></p>
+                <div class="testimonial-person">
+                    <img src="/assets/images/<%= t.avatar %>" loading="lazy" decoding="async" alt="<%= t.name %>">
+                    <div class="testimonial-person-info">
+                        <h5><%= t.name %></h5>
+                        <span><%= t.role %></span>
+                        <% if (t.institutionSlug) { %>
+                        <a href="/universities/<%= t.institutionSlug %>" class="testimonial-link">View university →</a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+</section>
+<!-- Testimonial End -->
+
+<!-- ***** Final CTA ***** -->
+<section class="section-v2 section-dark" style="text-align:center;">
+    <div class="container-v2">
+        <span class="eyebrow-v2" style="justify-content:center;">Ready when you are</span>
+        <h2 class="heading-gradient" style="font-size: clamp(1.8rem, 3.5vw, 2.6rem);">Start your study-abroad journey today</h2>
+        <p class="text-muted-dark" style="max-width: 560px; margin: 0 auto 2rem;">Check your eligibility in a few minutes, or book a free consultation with a real counsellor.</p>
+        <div class="hero-cta-row" style="justify-content:center;">
+            <a href="/checkyoureligibility" class="btn-v2 btn-v2-primary">Check Your Eligibility</a>
+            <a href="#contact-us" class="btn-v2 btn-v2-outline-dark">Book Free Consultation</a>
+        </div>
+    </div>
+</section>
+
+<!--contact us -->
+<section class="section-v2 section-light contact-v2" id="contact-us">
+    <div class="container-v2">
+        <div class="section-head reveal" data-reveal>
+            <span class="eyebrow-v2">Contact us</span>
+            <h2>Contact For Any Query</h2>
+        </div>
+    <% if (typeof acknowledgment != 'undefined' && acknowledgment.length > 1 ) { %>
+        <div class="alert alert-success" role="alert">
+            <%= acknowledgment %>
+        </div>
+    <% } %>
+    <% if (typeof errorMessage != 'undefined' && errorMessage.length > 1 ){ %>
+        <div class="alert alert-danger" role="alert">
+            <%= errorMessage %>
+        </div>
+    <% } %>
+        <div class="row justify-content-center g-4 contact-grid reveal" data-reveal data-reveal-delay="0.1s">
+            <div class="col-lg-7">
+                <div class="contact-form-card">
+                    <form action="/send" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="name" id="name"
+                                           placeholder="Your Name" required>
+                                    <label for="name">Your Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" name="email" id="email"
+                                           placeholder="Your Email" required pattern="[a-zA-Z0-9._%+-]+@gmail\.com$" >
+                                    <label for="email">Valid Email</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="subject" id="subject"
+                                           placeholder="Subject" required>
+                                    <label for="subject">Subject</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" placeholder="Leave a message here"
+                                              id="message" name="message"
+                                              style="height: 150px" required></textarea>
+                                    <label for="message">Message</label>
+                                </div>
+                            </div>
+                            <div class="g-recaptcha" data-sitekey="<%=process.env.RECAPTCHA_SITE_KEY%>" ></div>
+
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100 py-3" type="submit">Send Message
+                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="contact-info-card">
+                    <ul>
+                        <li>
+                            <div class="contact-info-icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+                            <div>
+                                <h6>Email Address</h6>
+                                <span>info@educonnections.net</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="contact-info-icon"><i class="fa fa-phone" aria-hidden="true"></i></div>
+                            <div>
+                                <h6>Phone</h6>
+                                <span>Perth +61 8  61174088 / Brisbane +61 7 34974903</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="contact-info-icon"><i class="fa fa-whatsapp" aria-hidden="true"></i></div>
+                            <div>
+                                <h6>WhatsApp</h6>
+                                <span>+61 416049299</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- contact us end -->
+
+</main>
+
+<%- include('partials/footer') %>
+
+<%- include('partials/scripts') %>
+<script>
+    // Testimonials carousel
+    $(".testimonial-carousel").owlCarousel({
+        autoplay: true,
+        smartSpeed: 1000,
+        margin: 25,
+        dots: true,
+        loop: true,
+        nav: true,
+        navText: [
+            '<i class="bi bi-chevron-left"></i>',
+            '<i class="bi bi-chevron-right"></i>'
+        ],
+        responsive: {
+            0: { items: 1 },
+            768: { items: 2 },
+            1200: { items: 3 }
+        }
+    });
+</script>
+</body>
+</html>

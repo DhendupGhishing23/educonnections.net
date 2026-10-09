@@ -1,0 +1,178 @@
+<%- include('partials/head', {
+    title: 'Check Your Eligibility',
+    description: 'Fill in a short form to check your eligibility for studying in Australia, New Zealand, Canada or South Korea with Edu Connections.',
+    needsRecaptcha: true
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="hero-v2" style="padding: 3.5rem 0 3rem;">
+    <div class="container-v2">
+        <nav class="breadcrumb-v2" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Eligibility Check</span></nav>
+        <span class="eyebrow-v2" style="margin-top:1rem;">Two minutes, real answers</span>
+        <h1 style="color:#fff; font-size: clamp(1.9rem, 3.5vw, 2.6rem);">Check Your Eligibility</h1>
+        <p class="text-muted-dark" style="max-width:560px;">Tell us a little about yourself and a counsellor will follow up with real next steps.</p>
+    </div>
+</section>
+
+<section class="contact-us" id="contact-us" style="margin-top: 0; padding-top: 3rem;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="container-xxl py-3">
+                    <div class="container py-3">
+                        <% if (typeof acknowledgment !='undefined' && acknowledgment.length > 1 ) { %>
+                            <div class="alert alert-success" role="alert">
+                                <%= acknowledgment %>
+                            </div>
+                        <% } %>
+                        <%if (typeof errorMessage !='undefined' && errorMessage.length > 1 ){ %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= errorMessage %>
+                            </div>
+                        <% } %>
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <div class="reveal" data-reveal style="margin-top: 0.5rem">
+                                    <form action="/checkyoureligibility" method="post">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" name="name" id="name"
+                                                           placeholder="Your Name" required>
+                                                    <label for="name">Your Name</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" name="country" id="country"
+                                                           placeholder="Your nationality" required>
+                                                    <label for="country">Your nationality</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" name="phone" id="phone"
+                                                           placeholder="Phone Number" required>
+                                                    <label for="phone">Phone Number</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="desiredcountry" id="desiredcountry" required>
+                                                        <option value="" disabled selected>Select your desired country</option>
+                                                        <option value="Canada">Canada</option>
+                                                        <option value="Korea">South Korea</option>
+                                                        <option value="New-Zealand">New Zealand</option>
+                                                        <option value="Australia">Australia</option>
+                                                    </select>
+                                                    <label for="desiredcountry">Desired country</label>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="qualification" id="qualification" required>
+                                                        <option value="" disabled selected>Select your qualification</option>
+                                                        <option value="highSchool">Your High School</option>
+                                                        <option value="associate">Associate Degree</option>
+                                                        <option value="bachelor">Bachelor's Degree</option>
+                                                        <option value="master">Master's Degree</option>
+                                                        <option value="doctorate">Doctorate</option>
+                                                        <option value="diploma">Diploma</option>
+                                                    </select>
+                                                    <label for="qualification">Highest Qualification</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input type="email" class="form-control" name="email" id="email"
+                                                           placeholder="Your Valid Email" required pattern="[a-zA-Z0-9._%+-]+@gmail\.com$">
+                                                    <label for="email">Your Valid Email</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="agegroup" id="agegroup" required>
+                                                        <option value="" disabled selected>Age</option>
+                                                        <option value="Below 16">Below 16</option>
+                                                        <option value="16-20">16-20</option>
+                                                        <option value="21-25">21-25</option>
+                                                        <option value="26-30">26-30</option>
+                                                        <option value="31-35">31-35</option>
+                                                        <option value="36-40">36-40</option>
+                                                        <option value="41-50">41-50</option>
+                                                        <option value="51-55">51-55</option>
+                                                        <option value="56-60">56-60</option>
+                                                        <option value="Above-61">Above 61</option>
+                                                    </select>
+                                                    <label for="agegroup">Age Group</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="book" id="book" required>
+                                                        <option value="" disabled selected>Book a Consultation</option>
+                                                        <option value="yes">YES</option>
+                                                        <option value="no">No</option>
+                                                    </select>
+                                                    <label for="book">Consultation</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6" id="datePickerContainer" style="display: none; ">
+                                                <div class="form-floating">
+                                                    <input type="date" class="form-control" name="consultationDate" id="consultationDate" placeholder="Select a date">
+                                                    <label for="consultationDate">Consultation Date</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-floating">
+                                                    <textarea class="form-control" placeholder="Leave a message here"
+                                                              id="message" name="message"
+                                                              style="height: 150px" ></textarea>
+                                                    <label for="message">Message</label>
+                                                </div>
+                                            </div>
+                                            <div class="g-recaptcha" data-sitekey="<%=process.env.RECAPTCHA_SITE_KEY%>" ></div>
+
+                                            <div class="col-12">
+                                                <button class="btn-v2 btn-v2-primary w-100 py-3" type="submit" style="width:100%;">Submit Now</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</main>
+
+<%- include('partials/footer') %>
+
+<%- include('partials/scripts') %>
+<script>
+    // Show/hide the consultation date field based on the "Book a Consultation" answer.
+    $(document).ready(function () {
+        $('#book').on('change', function () {
+            if ($(this).val() === 'yes') {
+                $('#datePickerContainer').show();
+            } else {
+                $('#datePickerContainer').hide();
+            }
+        });
+    });
+</script>
+</body>
+</html>

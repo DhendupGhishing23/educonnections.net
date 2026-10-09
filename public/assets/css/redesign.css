@@ -1,0 +1,1313 @@
+/* ==========================================================================
+   redesign.css — 2026 futuristic redesign. Loaded after style.css / refine.css
+   so it wins the cascade without deleting either. Organised by component;
+   search for the "====" headers to jump around.
+   ========================================================================== */
+
+/* ---------- Base / typography -------------------------------------------- */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* ---------- Icon font fallback (favorite/save heart) -----------------------
+   The save/favorite icon is the only place this redesign uses FA5's style-
+   prefix syntax (far = outline "not saved", fas = solid "saved" — toggled by
+   favorites.js). The project's local FA4.3 fallback (assets/css/fontawesome.css,
+   only used if the FA5 CDN is unreachable) predates that prefix system and
+   defines no .far/.fas rule at all, so without this, a CDN outage would leave
+   the heart icon rendering as an empty/undefined glyph. This is the last
+   stylesheet loaded, so it wins the cascade (equal specificity, later source
+   order) in both cases: 'Font Awesome 5 Free' is listed first and is what
+   actually renders whenever the CDN loads normally; 'FontAwesome' (the local
+   4.3 family, always available) is only reached if that first font never
+   loaded, giving a solid heart in both states rather than nothing. */
+.far, .fas {
+  font-family: 'Font Awesome 5 Free', 'FontAwesome';
+}
+
+/* ---------- Dependency-free icons -------------------------------------------
+   A handful of icon-font glyphs (long-arrow-alt-right, external-link-alt, dollar-sign,
+   sliders-h) only exist under their FA5 names, not in the local FA4.3 fallback bundle
+   (assets/css/fontawesome.css). When the FA5 CDN doesn't load for a visitor - a blocked host,
+   an ad/tracker blocker, a restrictive network - the page silently falls back to that local
+   bundle and these specific glyphs render as an empty box instead of an arrow/icon. Rather than
+   pick yet another icon name that might have the same problem, these are inlined as plain SVG
+   (currentColor, so they still pick up whatever text color/hover state applies) - they render
+   identically regardless of any font loading, CDN, or network condition. */
+.i-svg { width: 1em; height: 1em; vertical-align: -0.14em; flex-shrink: 0; }
+
+body { font-family: var(--font-sans); }
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.01em; }
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -60px;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-sm);
+  z-index: 2000;
+  transition: top var(--duration-base) var(--ease-standard);
+  text-decoration: none;
+  font-weight: 600;
+}
+.skip-link:focus { top: 1rem; color: #fff; }
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.section-dark { background: var(--surface-dark-0); color: var(--text-on-dark); }
+.section-light { background: var(--surface-light-0); color: var(--text-on-light); }
+
+.eyebrow-v2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 0.75rem;
+}
+.eyebrow-v2::before {
+  content: "";
+  width: 22px;
+  height: 2px;
+  background: var(--gradient-brand);
+  border-radius: 2px;
+}
+.section-light .eyebrow-v2 { color: var(--color-primary-dark, var(--color-primary)); }
+
+.heading-gradient {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.section-light .heading-gradient {
+  background: var(--gradient-brand-2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-muted-dark { color: var(--text-on-dark-muted); }
+.text-muted-light { color: var(--text-on-light-muted); }
+
+.container-v2 { max-width: var(--container-max); margin: 0 auto; padding: 0 1.5rem; }
+
+/* ---------- Buttons -------------------------------------------------------- */
+.btn-v2 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 0.96rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-standard),
+              box-shadow var(--duration-fast) var(--ease-standard),
+              background var(--duration-fast) var(--ease-standard),
+              color var(--duration-fast) var(--ease-standard);
+  white-space: nowrap;
+}
+.btn-v2:hover { transform: translateY(-2px); }
+.btn-v2:active { transform: translateY(0); }
+.btn-v2-primary { background: var(--gradient-brand); color: #fff; box-shadow: var(--glow-primary); }
+.btn-v2-primary:hover { box-shadow: 0 0 0 1px rgba(23, 105, 224,0.55), 0 0 34px rgba(15, 163, 168,0.45); color: #fff; }
+.btn-v2-outline-dark { background: transparent; border-color: rgba(255,255,255,0.28); color: var(--text-on-dark); }
+.btn-v2-outline-dark:hover { border-color: var(--color-accent); color: #fff; background: rgba(15, 163, 168,0.08); }
+.btn-v2-outline-light { background: transparent; border-color: rgba(15,23,42,0.16); color: var(--text-on-light); }
+.btn-v2-outline-light:hover { border-color: var(--color-primary); color: var(--color-primary); background: rgba(23, 105, 224,0.05); }
+.btn-v2-ghost { background: transparent; color: inherit; padding: 0.6rem 0.9rem; }
+.btn-v2-sm { padding: 0.55rem 1.1rem; font-size: 0.85rem; }
+.btn-v2[disabled], .btn-v2.is-disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+/* ---------- Navbar ---------------------------------------------------------- */
+.navbar-v2 {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  /* Nearly-opaque dark navy, not a light translucent tint: the navbar sits in normal document
+     flow ABOVE the hero (see index.ejs — nav is included before <section class="hero-v2">), so
+     at page load there is nothing dark behind it to blend with — just the legacy body{background:#fff}
+     from style.css. A low-alpha tint (previously 0.55) over that white background mixes down to
+     a flat medium gray instead of navy, which is the "current color is not matching" the user
+     saw. Keeping a touch of transparency (0.92) preserves the intended glassy blur once the user
+     scrolls content underneath it, while staying visually solid dark navy against any background. */
+  background: rgba(11, 31, 58, 0.92);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard);
+}
+.navbar-v2.is-scrolled {
+  background: rgba(11, 31, 58, 0.98);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+.navbar-v2 .container-v2 { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; width: 100%; }
+.navbar-v2 .brand { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; }
+.navbar-v2 .brand-logo-icon { height: 2.1rem; width: auto; display: block; flex-shrink: 0; }
+.navbar-v2 .brand-name { color: #fff; font-weight: 800; font-size: 1.15rem; letter-spacing: 0.01em; text-transform: uppercase; }
+
+/* Logo bars blink in sequence (equalizer-style), each bar offset from the next so the "wave"
+   visibly travels left-to-right and loops. Colors match the original banner-removebg-preview.png
+   art (gold / orange-red / gold / cream / gold / cream) so this reads as the same mark, just alive. */
+@keyframes logo-bar-blink {
+  0%, 40%, 100% { opacity: 1; }
+  20% { opacity: 0.22; }
+}
+.brand-logo-icon .logo-bar {
+  animation: logo-bar-blink 3.2s ease-in-out infinite;
+  transform-origin: center;
+}
+.brand-logo-icon .logo-bar-1 { animation-delay: 0s; }
+.brand-logo-icon .logo-bar-2 { animation-delay: 0.16s; }
+.brand-logo-icon .logo-bar-3 { animation-delay: 0.32s; }
+.brand-logo-icon .logo-bar-4 { animation-delay: 0.48s; }
+.brand-logo-icon .logo-bar-5 { animation-delay: 0.64s; }
+.brand-logo-icon .logo-bar-6 { animation-delay: 0.80s; }
+@media (prefers-reduced-motion: reduce) { .brand-logo-icon .logo-bar { animation: none; } }
+
+.navbar-v2 .nav-links { display: flex; align-items: center; gap: 1.9rem; list-style: none; margin: 0; padding: 0; }
+.navbar-v2 .nav-links a {
+  color: var(--text-on-dark-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.94rem;
+  position: relative;
+  padding: 0.4rem 0;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.navbar-v2 .nav-links a::after {
+  content: "";
+  position: absolute; left: 0; right: 100%; bottom: -2px;
+  height: 2px; background: var(--gradient-brand); border-radius: 2px;
+  transition: right var(--duration-base) var(--ease-standard);
+}
+.navbar-v2 .nav-links a:hover,
+.navbar-v2 .nav-links a[aria-current="page"] { color: #fff; }
+.navbar-v2 .nav-links a:hover::after,
+.navbar-v2 .nav-links a[aria-current="page"]::after { right: 0; }
+
+.navbar-v2 .nav-actions { display: flex; align-items: center; gap: 0.6rem; }
+.nav-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text-on-dark); cursor: pointer;
+  transition: background var(--duration-fast), border-color var(--duration-fast), transform var(--duration-fast);
+}
+.nav-icon-btn:hover { background: rgba(15, 163, 168,0.16); border-color: var(--color-accent); transform: translateY(-1px); }
+
+.nav-toggle {
+  display: none;
+  flex-direction: column; gap: 5px;
+  width: 42px; height: 42px; border-radius: 50%;
+  align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);
+  cursor: pointer;
+}
+.nav-toggle span { display: block; width: 18px; height: 2px; background: #fff; border-radius: 2px; transition: transform var(--duration-fast), opacity var(--duration-fast); }
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-drawer {
+  position: fixed; inset: 0; z-index: 1200;
+  visibility: hidden;
+}
+.mobile-drawer .drawer-backdrop {
+  position: absolute; inset: 0; background: rgba(4,8,16,0.6);
+  opacity: 0; transition: opacity var(--duration-base) var(--ease-standard);
+}
+.mobile-drawer .drawer-panel {
+  position: absolute; top: 0; right: 0; bottom: 0; width: min(86vw, 360px);
+  background: var(--surface-dark-1); border-left: 1px solid var(--surface-dark-border);
+  padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;
+  transform: translateX(100%); transition: transform var(--duration-slow) var(--ease-standard);
+  overflow-y: auto;
+}
+.mobile-drawer.is-open { visibility: visible; }
+.mobile-drawer.is-open .drawer-backdrop { opacity: 1; }
+.mobile-drawer.is-open .drawer-panel { transform: translateX(0); }
+.mobile-drawer .drawer-close { align-self: flex-end; }
+.mobile-drawer .drawer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.25rem; }
+.mobile-drawer .drawer-links a {
+  display: block; padding: 0.9rem 0.25rem; color: var(--text-on-dark); text-decoration: none;
+  font-weight: 600; font-size: 1.05rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.mobile-drawer .drawer-links a[aria-current="page"] { color: var(--color-accent); }
+
+@media (max-width: 991px) {
+  .navbar-v2 .nav-links { display: none; }
+  .nav-toggle { display: inline-flex; }
+}
+/* "Check Your Eligibility" is a lot longer than the old "Get Started" label, so the
+   narrow desktop band just above the 991px breakpoint (where the full nav-links menu
+   is still showing) doesn't have room for it alongside the logo, links and search icon
+   without overflowing - tighten the link spacing and button padding just in that band. */
+@media (min-width: 992px) and (max-width: 1060px) {
+  .navbar-v2 .nav-links { gap: 1.1rem; }
+  .navbar-v2 .nav-actions { gap: 0.4rem; }
+  .navbar-v2 .nav-actions .btn-v2-primary.btn-v2-sm { padding: 0.55rem 0.8rem; font-size: 0.8rem; }
+}
+@media (max-width: 560px) {
+  .navbar-v2 .nav-actions .btn-v2-primary.btn-v2-sm { padding: 0.7rem 1rem; font-size: 0.86rem; }
+}
+@media (max-width: 480px) {
+  /* Icon-only logo on small phones: the animated bars + search + Get Started + menu toggle
+     don't all fit alongside the full "EDU CONNECTIONS" wordmark without wrapping/overflowing
+     the viewport, so the wordmark drops and the blinking mark carries the brand alone. */
+  .navbar-v2 .brand-name { display: none; }
+}
+
+/* ---------- Hero ------------------------------------------------------------ */
+/* Flat Deep Navy (#0B1F3A) - same var(--surface-dark-0) as every other dark section
+   (featured universities, the process steps, the why-choose-us/stats block, the
+   footer) - so the whole site shares one navy instead of the hero's own gradient. */
+.hero-v2 {
+  position: relative;
+  background: var(--surface-dark-0);
+  color: var(--text-on-dark);
+  padding: 5.5rem 0 6rem;
+  overflow: hidden;
+}
+/* Only the homepage hero (the one section with id="top") fills the full viewport below the
+   sticky nav on load. Eight other pages (destinations, universities, programs, etc.) reuse the
+   same .hero-v2 class as a compact page-title banner via an inline padding override — scoping
+   this to #top keeps those working exactly as before instead of also stretching to 100vh. */
+.hero-v2#top {
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  align-items: center;
+  padding: 3rem 0;
+}
+.hero-v2::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 72%);
+  pointer-events: none;
+}
+.hero-v2 .container-v2 { position: relative; z-index: 1; }
+.hero-v2-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 3rem; align-items: center; }
+@media (max-width: 991px) { .hero-v2-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+.hero-v2 h1 {
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+  line-height: 1.08;
+  color: #fff;
+  margin-bottom: 1.1rem;
+}
+.hero-v2 .lede { font-size: 1.12rem; color: var(--text-on-dark-muted); max-width: 46ch; margin-bottom: 2rem; }
+.hero-v2 .hero-cta-row { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-bottom: 2.25rem; }
+.hero-v2 .hero-trust-row { display: flex; flex-wrap: wrap; gap: 1.75rem; color: var(--text-on-dark-faint); font-size: 0.85rem; }
+/* Gold is the brand's "small accents / achievements" color - the trust-row numbers (study
+   destinations, partner institutions, offices) are exactly that: small stat achievements, not
+   body copy, so they get gold instead of plain white (9.4:1 contrast on the navy hero). */
+.hero-v2 .hero-trust-row strong { color: var(--color-gold); font-weight: 700; }
+
+/* Hero / nav search field, shared visual language with the search overlay */
+.search-field {
+  position: relative;
+  display: flex; align-items: center; gap: 0.6rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: var(--radius-pill);
+  padding: 0.35rem 0.5rem 0.35rem 1.15rem;
+  backdrop-filter: blur(10px);
+  transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
+  max-width: 560px;
+}
+.search-field:focus-within { border-color: var(--color-accent); box-shadow: var(--glow-accent); }
+.search-field .search-icon { color: var(--text-on-dark-faint); flex-shrink: 0; }
+.search-field input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: #fff; font-size: 0.98rem; padding: 0.65rem 0;
+}
+.search-field input::placeholder { color: var(--text-on-dark-faint); }
+.search-field button.search-submit {
+  flex-shrink: 0; border: none; border-radius: var(--radius-pill);
+  background: var(--gradient-brand); color: #fff; font-weight: 600;
+  padding: 0.6rem 1.2rem; cursor: pointer; font-size: 0.88rem;
+}
+.hero-v2 .search-field { margin-bottom: 0.6rem; }
+.hero-search-wrap { position: relative; }
+
+.search-results-panel {
+  position: absolute; left: 0; right: 0; top: calc(100% + 10px);
+  background: var(--surface-dark-1);
+  border: 1px solid var(--surface-dark-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 0.75rem;
+  z-index: 50;
+  max-height: min(70vh, 480px);
+  overflow-y: auto;
+  display: none;
+}
+.search-results-panel.is-open { display: block; }
+.search-results-panel .result-group { margin-bottom: 0.5rem; }
+.search-results-panel .result-group:last-child { margin-bottom: 0; }
+.search-results-panel .result-group-label {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+  color: var(--text-on-dark-faint); padding: 0.5rem 0.6rem 0.35rem;
+}
+.search-results-panel a.result-row,
+.search-results-panel button.result-row {
+  display: flex; align-items: center; gap: 0.75rem; width: 100%;
+  padding: 0.6rem 0.6rem; border-radius: var(--radius-sm);
+  color: var(--text-on-dark); text-decoration: none; background: none; border: none;
+  text-align: left; cursor: pointer; font-size: 0.92rem;
+}
+.search-results-panel a.result-row:hover,
+.search-results-panel a.result-row.is-active,
+.search-results-panel button.result-row:hover { background: rgba(255,255,255,0.07); }
+.search-results-panel .result-row img { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; background: #fff; padding: 2px; flex-shrink: 0; }
+.search-results-panel .result-row .result-meta { color: var(--text-on-dark-faint); font-size: 0.78rem; }
+.search-results-panel .search-empty { padding: 1rem 0.6rem; color: var(--text-on-dark-faint); font-size: 0.9rem; }
+.search-results-panel .popular-chip-list { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.35rem 0.6rem 0.6rem; }
+.search-results-panel .popular-chip {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-on-dark-muted); border-radius: var(--radius-pill);
+  padding: 0.4rem 0.85rem; font-size: 0.82rem; cursor: pointer;
+}
+.search-results-panel .popular-chip:hover { border-color: var(--color-accent); color: #fff; }
+
+/* Full-screen search overlay (nav search icon, and mobile) */
+.search-overlay {
+  position: fixed; inset: 0; z-index: 1300;
+  background: rgba(4,8,16,0.72);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 6vh 1.25rem;
+  visibility: hidden; opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+.search-overlay.is-open { visibility: visible; opacity: 1; }
+.search-overlay .search-overlay-panel { width: min(680px, 100%); }
+.search-overlay .search-field { max-width: none; background: var(--surface-dark-1); }
+.search-overlay .search-results-panel { position: static; margin-top: 0.75rem; display: block; max-height: min(60vh, 520px); }
+.search-overlay .close-search { display: flex; justify-content: flex-end; margin-bottom: 0.75rem; }
+
+/* ---------- World map (rotating globe) --------------------------------------
+   A real (low-detail) world map - see data/worldGeo.js - rendered twice side
+   by side inside one SVG and scrolled horizontally with CSS. Viewed through a
+   circular window with a radial-gradient overlay for sphere shading, it reads
+   as a slowly spinning globe without any 3D/WebGL library. Rotation pauses on
+   hover/focus so the pins are easy to actually click, and is disabled under
+   prefers-reduced-motion. ---------------------------------------------------- */
+.world-map-card {
+  position: relative;
+  background: rgba(255,255,255,0.04);
+  border: var(--border-glass-dark);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-lg);
+}
+.globe-viewport {
+  position: relative;
+  width: min(400px, 100%);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(circle at 34% 30%, var(--surface-dark-2) 0%, var(--surface-dark-0) 78%);
+  /* Outermost, largest shadow = a soft teal "atmosphere" haze just past the rim,
+     like light scattering at a planet's edge; the rest is the existing glow/drop. */
+  box-shadow:
+    0 0 34px 6px rgba(15, 163, 168, 0.28),
+    var(--glow-accent),
+    0 18px 45px rgba(2, 6, 20, 0.55);
+  border: 1px solid var(--surface-dark-border);
+}
+.globe-strip {
+  /* height/translateY: zoomed and framed so the visible band runs roughly
+     +75deg to -45deg latitude (biased north, not equator-centred) - all 4
+     destinations sit comfortably inside that, including Canada at 49degN,
+     without showing empty ocean near the poles most of the time. */
+  position: absolute;
+  top: 50%; left: 0;
+  height: 150%; width: auto;
+  display: block;
+  transform: translateY(-41.7%) translateX(0);
+  animation: globe-spin 32s linear infinite;
+  will-change: transform;
+}
+.world-map-card:hover .globe-strip,
+.world-map-card:focus-within .globe-strip { animation-play-state: paused; }
+@keyframes globe-spin {
+  from { transform: translateY(-41.7%) translateX(0); }
+  to   { transform: translateY(-41.7%) translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) { .globe-strip { animation: none; } }
+.globe-ocean {
+  fill: url(#globeOceanGradient);
+}
+.globe-land {
+  /* A real muted land tone (sage/olive-gray) rather than a flat brand-gray, so
+     the ocean-vs-land contrast reads like an actual planet rather than an
+     abstract chart, while staying dark/muted enough for the dark theme. */
+  fill: #6b7d68;
+  stroke: rgba(5, 15, 25, 0.4);
+  stroke-width: 0.6;
+}
+.globe-highlight {
+  fill: url(#globeHighlightGradient);
+  filter: drop-shadow(0 0 5px rgba(15, 163, 168, 0.55));
+}
+.globe-graticule {
+  fill: none;
+  stroke: rgba(130, 180, 245, 0.16);
+  stroke-width: 0.6;
+  pointer-events: none;
+}
+.globe-label {
+  font-family: var(--font-sans);
+  font-size: 19px;
+  font-weight: 700;
+  fill: #fff;
+  stroke: rgba(3, 10, 20, 0.85);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+  letter-spacing: 0.2px;
+}
+/* .globe-shading sells the flat, scrolling map as an actual sphere, entirely
+   with layered gradients (no 3D/WebGL): a bright "sun" highlight near the
+   upper-left, strong dark "limb" vignetting that curves in hardest at the
+   left/right edges (where a real rotating sphere's surface turns away from
+   the viewer fastest), a soft under-glow, and a thin bright rim-light arc
+   tracing the top-left of the circle's own edge like light grazing a ball. */
+.globe-shading {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255,255,255,0.32), rgba(255,255,255,0) 30%),
+    radial-gradient(ellipse 68% 100% at 50% 50%, rgba(2,6,20,0) 45%, rgba(2,6,20,0.92) 100%),
+    radial-gradient(circle at 68% 82%, rgba(2,6,20,0.55), rgba(2,6,20,0) 55%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    inset -10px -14px 34px rgba(2,6,20,0.75),
+    inset 8px 10px 28px rgba(130, 180, 245,0.10);
+}
+.world-map-card .map-water { fill: none; }
+.world-map-card .map-dot { fill: rgba(130, 180, 245, 0.28); }
+.map-hotspot { cursor: pointer; }
+.map-hotspot .hotspot-ring {
+  fill: none; stroke: var(--color-accent); stroke-width: 1.4;
+  opacity: 0.55; transform-origin: center; transform-box: fill-box;
+  animation: hotspot-pulse 2.6s ease-out infinite;
+}
+.map-hotspot:nth-of-type(2n) .hotspot-ring { animation-delay: .6s; }
+.map-hotspot:nth-of-type(3n) .hotspot-ring { animation-delay: 1.2s; }
+@keyframes hotspot-pulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  80% { transform: scale(2.4); opacity: 0; }
+  100% { opacity: 0; }
+}
+.map-hotspot .hotspot-dot {
+  fill: var(--color-accent); stroke: #fff; stroke-width: 1;
+  transition: r var(--duration-fast) var(--ease-standard), fill var(--duration-fast);
+}
+.map-hotspot:hover .hotspot-dot,
+.map-hotspot:focus-visible .hotspot-dot,
+.map-hotspot.is-active .hotspot-dot { fill: #fff; filter: drop-shadow(0 0 8px var(--color-accent)); }
+.map-hotspot:focus { outline: none; }
+@media (prefers-reduced-motion: reduce) { .map-hotspot .hotspot-ring { animation: none; opacity: 0.25; } }
+
+.map-tooltip {
+  position: absolute; pointer-events: none;
+  background: var(--surface-dark-2); border: 1px solid var(--surface-dark-border);
+  color: #fff; padding: 0.55rem 0.85rem; border-radius: var(--radius-sm);
+  font-size: 0.85rem; box-shadow: var(--shadow-md);
+  transform: translate(-50%, calc(-100% - 12px));
+  opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard);
+  white-space: nowrap; z-index: 30;
+}
+.map-tooltip.is-visible { opacity: 1; }
+.map-tooltip strong { display: block; }
+.map-tooltip span { color: var(--text-on-dark-muted); font-size: 0.78rem; }
+.map-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 0.9rem; font-size: 0.82rem; color: var(--text-on-dark-faint); }
+.map-legend .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); margin-right: 0.4rem; }
+
+/* ---------- Stats (now merged into the end of .section-brand, see below) --------- */
+.stats-strip { padding: 3.5rem 0; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+@media (max-width: 767px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card {
+  text-align: center; padding: 1.5rem 1rem; border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.04); border: var(--border-glass-dark);
+  transition: transform var(--duration-base) var(--ease-standard), background var(--duration-base), border-color var(--duration-base);
+}
+.stat-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.22); }
+.stat-card .stat-icon { display: block; font-size: 1.2rem; color: var(--color-gold); margin-bottom: 0.6rem; }
+.stat-card .stat-number {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem); font-weight: 800;
+  background: var(--gradient-text); -webkit-background-clip: text; background-clip: text; color: transparent;
+  display: block; line-height: 1;
+}
+.stat-card .stat-label { color: var(--text-on-dark-muted); font-size: 0.88rem; margin-top: 0.5rem; }
+
+/* Thin fading rule that separates the feature cards from the stats row within the
+   merged section, in place of what used to be a hard border between two sections. */
+.stats-divider {
+  height: 1px; margin: 3rem 0 2.5rem;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+}
+@media (max-width: 767px) { .stats-divider { margin: 2.25rem 0 2rem; } }
+
+/* ---------- Section shell / headings --------------------------------------- */
+.section-v2 { padding: 5.5rem 0; }
+.section-v2-tight { padding: 3.5rem 0; }
+.section-head { max-width: 680px; margin: 0 auto 3rem; text-align: center; }
+.section-head h2 { font-size: clamp(1.7rem, 3vw, 2.3rem); margin-bottom: 0.75rem; }
+.section-head p { font-size: 1.02rem; }
+.section-head.align-left { margin-left: 0; text-align: left; }
+
+/* ---------- Country cards ---------------------------------------------------- */
+.country-grid-v2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+@media (max-width: 1100px) { .country-grid-v2 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .country-grid-v2 { grid-template-columns: 1fr; } }
+
+.country-card-v2 {
+  display: flex; flex-direction: column;
+  position: relative;
+  border-radius: var(--radius-xl); overflow: hidden;
+  background: var(--surface-light-1);
+  border: var(--border-glass-light);
+  box-shadow: var(--shadow-md);
+  text-decoration: none; color: inherit; height: 100%;
+  transition: transform var(--duration-base) var(--ease-standard),
+              box-shadow var(--duration-base) var(--ease-standard),
+              border-color var(--duration-base) var(--ease-standard);
+}
+/* Gradient accent bar that sweeps in from the left on hover, echoing the brand gradient used
+   on primary buttons/eyebrows elsewhere rather than a plain drop-shadow lift. */
+.country-card-v2::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--gradient-brand);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform var(--duration-slow) var(--ease-standard);
+  z-index: 2;
+}
+.country-card-v2:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg), 0 20px 45px -18px rgba(23, 105, 224, 0.45);
+  border-color: rgba(23, 105, 224, 0.22);
+  color: inherit;
+}
+.country-card-v2:hover::before { transform: scaleX(1); }
+.country-card-v2 .card-media { position: relative; height: 190px; overflow: hidden; }
+.country-card-v2 .card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--duration-slow) var(--ease-standard); }
+.country-card-v2 .card-media::after {
+  /* Grounds the photo in the site's dark palette instead of leaving a bare stock photo,
+     and guarantees the flag badge sitting on top of it always has enough contrast. */
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(11, 31, 58,0) 42%, rgba(11, 31, 58,0.62) 100%);
+  pointer-events: none;
+}
+.country-card-v2:hover .card-media img { transform: scale(1.08); }
+.country-card-v2 .card-media .flag-badge {
+  position: absolute; left: 0.9rem; bottom: -20px; z-index: 3;
+  width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
+  border: 3px solid var(--surface-light-1);
+  box-shadow: 0 6px 16px rgba(11, 31, 58,0.3), 0 0 0 1px rgba(23, 105, 224,0.12);
+  transition: transform var(--duration-base) var(--ease-standard);
+}
+.country-card-v2:hover .card-media .flag-badge { transform: scale(1.08) translateY(-2px); }
+.country-card-v2 .card-media .flag-badge img { width: 100%; height: 100%; object-fit: cover; }
+.country-card-v2 .card-body { padding: 2.1rem 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.65rem; flex: 1; }
+.country-card-v2 h3 { font-size: 1.25rem; margin: 0; }
+.country-card-v2 .card-count {
+  display: inline-flex; align-items: center; gap: 0.4rem; width: fit-content;
+  color: var(--color-primary-dark, var(--color-primary)); font-weight: 700; font-size: 0.8rem;
+  background: rgba(23, 105, 224,0.08); border-radius: var(--radius-pill);
+  padding: 0.28rem 0.7rem 0.28rem 0.55rem;
+}
+.country-card-v2 .card-count::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(15, 163, 168,0.18); flex-shrink: 0;
+}
+.country-card-v2 .card-desc { color: var(--text-on-light-muted); font-size: 0.9rem; line-height: 1.55; flex: 1; }
+.country-card-v2 .field-chip-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
+.country-card-v2 .card-cta {
+  display: inline-flex; align-items: center; gap: 0.45rem; align-self: flex-start;
+  font-weight: 700; font-size: 0.86rem; color: var(--color-primary);
+  margin-top: 0.5rem; padding: 0.6rem 1rem;
+  border-radius: var(--radius-pill);
+  background: rgba(23, 105, 224,0.07);
+  transition: background var(--duration-base) var(--ease-standard),
+              color var(--duration-base) var(--ease-standard),
+              box-shadow var(--duration-base) var(--ease-standard);
+}
+.country-card-v2 .card-cta svg { transition: transform var(--duration-fast) var(--ease-standard); }
+.country-card-v2:hover .card-cta {
+  background: var(--gradient-brand); color: #fff; box-shadow: var(--glow-primary);
+}
+.country-card-v2:hover .card-cta svg { transform: translateX(4px); }
+
+.field-chip {
+  display: inline-flex; align-items: center;
+  background: rgba(23, 105, 224,0.08); color: var(--color-primary-dark, var(--color-primary));
+  border-radius: var(--radius-pill); padding: 0.28rem 0.7rem; font-size: 0.76rem; font-weight: 600;
+}
+.section-dark .field-chip { background: rgba(15, 163, 168,0.14); color: #8FE3E6; }
+
+/* ---------- Filter bar / listing toolbar ------------------------------------ */
+.listing-toolbar {
+  display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+  background: var(--surface-light-1); border: var(--border-glass-light);
+  border-radius: var(--radius-lg); padding: 1rem 1.1rem; box-shadow: var(--shadow-sm);
+  margin-bottom: 2rem;
+}
+.listing-toolbar .toolbar-search { flex: 1 1 240px; position: relative; }
+.listing-toolbar .toolbar-search input {
+  width: 100%; padding: 0.65rem 0.9rem 0.65rem 2.4rem; border-radius: var(--radius-pill);
+  border: 1px solid var(--surface-light-border); font-size: 0.92rem; background: var(--surface-light-0);
+}
+.listing-toolbar .toolbar-search i { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--text-on-light-faint); }
+.listing-toolbar select {
+  padding: 0.62rem 2rem 0.62rem 0.9rem; border-radius: var(--radius-pill);
+  border: 1px solid var(--surface-light-border); background: var(--surface-light-0); font-size: 0.88rem;
+}
+.listing-toolbar .toolbar-filter-btn { display: none; }
+.listing-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; color: var(--text-on-light-muted); font-size: 0.9rem; flex-wrap: wrap; gap: 0.5rem;}
+
+@media (max-width: 767px) {
+  /* Only toolbars that provide a mobile bottom sheet (data-has-sheet) hide their inline
+     filter controls - a plain toolbar with just one or two selects (e.g. the per-country
+     page) leaves them visible and lets them wrap instead. */
+  .listing-toolbar[data-has-sheet] .filter-group { display: none; }
+  .listing-toolbar[data-has-sheet] .toolbar-filter-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.62rem 1rem; border-radius: var(--radius-pill);
+    border: 1px solid var(--surface-light-border); background: var(--surface-light-0); font-size: 0.88rem;
+  }
+}
+
+.filter-drawer-backdrop {
+  position: fixed; inset: 0; background: rgba(4,8,16,0.55); z-index: 1250;
+  opacity: 0; visibility: hidden; transition: opacity var(--duration-base) var(--ease-standard);
+}
+.filter-drawer-backdrop.is-open { opacity: 1; visibility: visible; }
+.filter-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1260;
+  background: var(--surface-light-1); border-radius: 22px 22px 0 0;
+  padding: 1.5rem 1.25rem 2rem; max-height: 82vh; overflow-y: auto;
+  transform: translateY(100%); transition: transform var(--duration-slow) var(--ease-standard);
+  box-shadow: 0 -20px 50px rgba(0,0,0,0.25);
+}
+.filter-sheet.is-open { transform: translateY(0); }
+.filter-sheet .sheet-handle { width: 42px; height: 4px; border-radius: 2px; background: var(--surface-light-border); margin: 0 auto 1.25rem; }
+.filter-sheet .filter-field { margin-bottom: 1.25rem; }
+.filter-sheet label { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; }
+.filter-sheet select, .filter-sheet input { width: 100%; padding: 0.7rem 0.9rem; border-radius: var(--radius-sm); border: 1px solid var(--surface-light-border); }
+
+/* ---------- University / institution cards ---------------------------------- */
+.uni-grid-v2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+@media (max-width: 991px) { .uni-grid-v2 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .uni-grid-v2 { grid-template-columns: 1fr; } }
+
+.uni-card-v2 {
+  position: relative;
+  background: var(--surface-light-1); border: var(--border-glass-light);
+  border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column; gap: 0.85rem; height: 100%;
+  transition: transform var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard), border-color var(--duration-base);
+}
+.uni-card-v2:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: rgba(23, 105, 224,0.25); }
+/* Logo now spans the full card width as a banner (was a small fixed-size box with a lot of
+   dead white space beside it up to the favorite button) - the favorite button moves to float
+   as a small round overlay in the corner instead of sitting in the row next to the logo, so
+   the logo can actually use that whole width. */
+.uni-card-v2 .uni-card-top { position: relative; }
+.uni-card-v2 .uni-logo-wrap {
+  /* Real partner logos are wide crest+wordmark JPGs on their own white background, not square
+     transparent marks - a 56x56 square squeezed them down to a barely-legible sliver and the
+     white-on-white gave zero visual separation from the card. Full card width + real height (so
+     the logo actually renders at a readable size) + a real border/shadow (so the "plate" itself
+     is visible even when its content is white-on-white) fixes both at once. */
+  width: 100%; height: 132px; border-radius: var(--radius-sm); background: #ffffff;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  border: 1px solid rgba(11, 31, 58, 0.14);
+  box-shadow: 0 2px 8px rgba(11, 31, 58, 0.10);
+  padding: 0.9rem 1.3rem;
+}
+.uni-card-v2 .uni-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.uni-card-v2 .favorite-btn {
+  position: absolute; top: 0.6rem; right: 0.6rem; z-index: 2;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: none; background: rgba(255,255,255,0.92); cursor: pointer; color: var(--text-on-light-faint);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem; line-height: 1; box-shadow: 0 2px 8px rgba(11, 31, 58, 0.18);
+  transition: color var(--duration-fast), transform var(--duration-fast), background var(--duration-fast);
+}
+.uni-card-v2 .favorite-btn:hover { transform: scale(1.12); background: #fff; }
+.uni-card-v2 .favorite-btn.is-active { color: #ef4444; }
+.uni-card-v2 h3 { font-size: 1.05rem; margin: 0; }
+.uni-card-v2 .uni-meta-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; font-size: 0.8rem; color: var(--text-on-light-muted); }
+.uni-card-v2 .uni-meta-row .badge-type {
+  background: var(--surface-light-2); border-radius: var(--radius-pill); padding: 0.22rem 0.65rem; font-weight: 600; color: var(--text-on-light);
+}
+.uni-card-v2 .uni-desc { color: var(--text-on-light-muted); font-size: 0.88rem; line-height: 1.55; flex: 1; }
+.uni-card-v2 .uni-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: auto; }
+
+/* ---------- Skeleton loaders -------------------------------------------------- */
+.skeleton-card { border-radius: var(--radius-lg); padding: 1.5rem; background: var(--surface-light-1); border: var(--border-glass-light); }
+.skeleton-line, .skeleton-block { position: relative; overflow: hidden; background: var(--surface-light-2); border-radius: 8px; }
+.skeleton-line::after, .skeleton-block::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+  animation: skeleton-shimmer 1.4s infinite;
+}
+@keyframes skeleton-shimmer { 100% { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .skeleton-line::after, .skeleton-block::after { animation: none; } }
+.skeleton-block.logo { width: 100%; height: 132px; border-radius: var(--radius-sm); }
+.skeleton-line.title { height: 16px; width: 70%; margin: 0.9rem 0 0.6rem; }
+.skeleton-line.text { height: 10px; width: 100%; margin-bottom: 0.5rem; }
+.skeleton-line.text.short { width: 60%; }
+
+/* ---------- Pagination -------------------------------------------------------- */
+.pagination-v2 { display: flex; justify-content: center; align-items: center; gap: 0.4rem; margin-top: 2.5rem; flex-wrap: wrap; }
+.pagination-v2 a, .pagination-v2 span {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 40px; height: 40px; border-radius: var(--radius-pill); padding: 0 0.6rem;
+  text-decoration: none; font-size: 0.88rem; font-weight: 600; color: var(--text-on-light);
+  border: 1px solid var(--surface-light-border);
+}
+.pagination-v2 a:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.pagination-v2 .current { background: var(--gradient-brand); color: #fff; border-color: transparent; }
+.pagination-v2 .disabled { opacity: 0.4; pointer-events: none; }
+
+/* ---------- Breadcrumb --------------------------------------------------------- */
+.breadcrumb-v2 { font-size: 0.85rem; color: var(--text-on-dark-faint); display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.breadcrumb-v2 a { color: inherit; text-decoration: none; }
+.breadcrumb-v2 a:hover { color: #fff; text-decoration: underline; }
+.section-light .breadcrumb-v2 { color: var(--text-on-light-faint); }
+.section-light .breadcrumb-v2 a:hover { color: var(--color-primary); }
+
+/* ---------- University detail hero -------------------------------------------- */
+.uni-hero { padding: 3rem 0 3.5rem; }
+.uni-hero-top { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; margin-top: 1.25rem; }
+.uni-hero-logo {
+  /* Same fix as .uni-logo-wrap, sized up for its bigger hero placement: a wide plate instead of
+     a square, plus a real shadow so it visibly lifts off the dark hero regardless of the logo's
+     own (usually white) background. */
+  width: 208px; height: 114px; border-radius: var(--radius-lg); background: #fff;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.14); flex-shrink: 0;
+  box-shadow: 0 10px 26px rgba(11, 31, 58, 0.4);
+  padding: 0.75rem 1.1rem;
+}
+.uni-hero-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+@media (max-width: 480px) { .uni-hero-logo { width: 164px; height: 90px; } }
+.uni-hero h1 { color: #fff; margin-bottom: 0.4rem; font-size: clamp(1.6rem, 3vw, 2.2rem); }
+.uni-hero .uni-hero-meta { display: flex; flex-wrap: wrap; gap: 1rem; color: var(--text-on-dark-muted); font-size: 0.95rem; }
+.uni-hero .uni-hero-meta span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.uni-hero-actions { display: flex; gap: 0.6rem; margin-left: auto; flex-wrap: wrap; }
+@media (max-width: 767px) { .uni-hero-actions { margin-left: 0; width: 100%; } }
+
+/* ---------- Info grid (About / Admissions / Tuition / etc.) -------------------- */
+.info-card { background: var(--surface-light-1); border: var(--border-glass-light); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: var(--shadow-sm); height: 100%; }
+.info-card h2, .info-card h3 { font-size: 1.15rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.info-card h2 i, .info-card h3 i { color: var(--color-primary); }
+.info-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.65rem 0; border-bottom: 1px solid var(--surface-light-border); font-size: 0.92rem; }
+.info-row:last-child { border-bottom: none; }
+.info-row dt { color: var(--text-on-light-muted); font-weight: 600; }
+.info-row dd { margin: 0; text-align: right; }
+.unavailable-note {
+  color: var(--text-on-light-faint); font-style: italic; font-size: 0.88rem;
+}
+.unavailable-note i { color: var(--text-on-light-faint); margin-right: 0.35rem; }
+.info-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 860px) { .info-grid-2 { grid-template-columns: 1fr; } }
+
+/* Real, longer-form facts (entry requirements, tuition, etc.) don't fit the compact
+   label/value info-row above, so they get their own stacked block instead. */
+.detail-block { margin-bottom: 1.35rem; }
+.detail-block:last-of-type { margin-bottom: 0; }
+.detail-block h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-on-light-faint); font-weight: 700; margin: 0 0 0.4rem; }
+.detail-block p { color: var(--text-on-light-muted); font-size: 0.92rem; line-height: 1.65; margin: 0; }
+.detail-block p.unavailable-note { margin: 0; }
+
+.tag-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.tag-list .tag { background: var(--surface-light-2); border-radius: var(--radius-pill); padding: 0.3rem 0.8rem; font-size: 0.82rem; font-weight: 600; }
+
+/* ---------- Student story quote blocks (university & program detail pages) --------
+   Real bug fixed here: the legacy `img { width: 100%; }` rule in style.css beats a
+   bare width="36" HTML attribute (CSS always wins over presentational attributes), so
+   these avatars were stretching to the full width of their flex container while
+   staying 36px tall from the height attribute - a squashed, cropped sliver rather
+   than a circular photo. A dedicated class with an explicit CSS width fixes it. */
+.story-avatar {
+  width: 3rem;
+  height: 3rem;
+  min-width: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--surface-light-2);
+  box-shadow: 0 0 0 2px rgba(23, 105, 224, 0.2);
+  flex-shrink: 0;
+}
+.story-item { padding: 1.35rem 0; border-top: 1px solid var(--surface-light-border); }
+.story-item:first-child { padding-top: 0; border-top: none; }
+.story-quote-mark { display: block; color: var(--color-primary); opacity: 0.22; font-size: 1.9rem; margin-bottom: 0.35rem; }
+.story-text { color: var(--text-on-light-muted); font-style: italic; line-height: 1.7; margin: 0 0 1rem; }
+.story-person { display: flex; align-items: center; gap: 0.85rem; }
+.story-person h5 { margin: 0 0 0.1rem; font-size: 0.95rem; font-weight: 700; color: var(--text-on-light); }
+.story-person span { font-size: 0.85rem; color: var(--color-primary); font-weight: 600; }
+
+.map-link-card {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  background: var(--surface-light-2); border-radius: var(--radius-md); padding: 1.1rem 1.25rem;
+}
+.map-link-card a { font-weight: 700; color: var(--color-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
+
+/* ---------- Process / stepper (How Edu Connections works) ------------------------ */
+/* The section fills the viewport so the 5-step path reads as its own full-page "chapter"
+   while scrolling, rather than a cramped strip between the sections above and below. */
+.process-v2 { min-height: 100vh; display: flex; align-items: center; }
+.process-v2 .container-v2 { width: 100%; }
+@media (max-width: 767px) { .process-v2 { min-height: 0; padding: 4rem 0; } }
+
+.stepper-v2 { position: relative; }
+
+/* Connecting rail behind the numbered circles: a static dim track, plus a gradient fill that
+   sweeps left-to-right (scaleX 0 -> 1) once the section scrolls into view, via reveal.js adding
+   .is-visible to the [data-reveal] track wrapper - same mechanism every other section uses. */
+.stepper-track {
+  /* Insets line up with the horizontal center of the 1st/5th step-number circles in the
+     5-column grid below (half a grid column: (100% - 4*gap)/10, gap = 1.25rem = 20px). */
+  position: absolute; left: calc(10% - 8px); right: calc(10% - 8px); top: 55px; height: 2px;
+  background: rgba(255,255,255,0.10); z-index: 0; overflow: hidden; border-radius: 2px;
+}
+.stepper-track-fill {
+  display: block; height: 100%; width: 100%; transform-origin: left center; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-gold));
+  transition: transform calc(var(--duration-slow) * 3) var(--ease-standard);
+}
+.stepper-track.is-visible .stepper-track-fill { transform: scaleX(1); }
+@media (max-width: 991px) { .stepper-track { display: none; } }
+
+.timeline-v2 { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; }
+@media (max-width: 991px) { .timeline-v2 { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
+@media (max-width: 560px) { .timeline-v2 { grid-template-columns: 1fr; } }
+
+.timeline-step {
+  background: rgba(255,255,255,0.04); border: var(--border-glass-dark); border-radius: var(--radius-lg);
+  padding: 1.75rem 1.25rem 1.5rem; text-align: center;
+  transition: transform var(--duration-base) var(--ease-standard), border-color var(--duration-base), background var(--duration-base);
+}
+.timeline-step:hover { transform: translateY(-4px); border-color: rgba(23, 105, 224, 0.35); background: rgba(255,255,255,0.07); }
+.timeline-step .step-number {
+  width: 54px; height: 54px; margin: 0 auto 1.1rem; border-radius: 50%; background: var(--gradient-brand);
+  color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem;
+  box-shadow: 0 0 0 6px var(--surface-dark-0), var(--glow-primary);
+  position: relative; z-index: 1;
+}
+.timeline-step h3 { font-size: 1rem; color: #fff; margin-bottom: 0.4rem; }
+.timeline-step p { font-size: 0.86rem; color: var(--text-on-dark-muted); margin: 0; }
+
+@media (max-width: 991px) {
+  .timeline-step { text-align: left; display: flex; gap: 1rem; align-items: flex-start; }
+  .timeline-step .step-number { margin: 0; flex-shrink: 0; width: 44px; height: 44px; font-size: 1.05rem; box-shadow: none; }
+}
+
+/* ---------- Why-us feature grid --------------------------------------------------- */
+.feature-grid-v2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+@media (max-width: 860px) { .feature-grid-v2 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .feature-grid-v2 { grid-template-columns: 1fr; } }
+.feature-card-v2 { background: var(--surface-light-1); border: var(--border-glass-light); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: var(--shadow-sm); }
+.feature-card-v2 .feature-icon {
+  width: 46px; height: 46px; border-radius: var(--radius-sm); background: rgba(23, 105, 224,0.08);
+  color: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 1rem;
+}
+.feature-card-v2 h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
+.feature-card-v2 p { color: var(--text-on-light-muted); font-size: 0.9rem; margin: 0; }
+
+/* ---------- Section: brand navy (accent band between the lighter sections) -------
+   Flat Deep Navy (#0B1F3A) - exactly var(--surface-dark-0), the same solid color as
+   .section-dark (header/footer/stats-strip/etc.) - so this section and the stats
+   strip right after it read as one continuous background, not two different blues.
+   Full viewport height, same treatment as the process/stepper section above it.
+   Cards stay solid white/navy-text (the same, already-audited AA-safe combination
+   used everywhere else) rather than tinted "glass". */
+.section-brand {
+  position: relative;
+  background: var(--surface-dark-0);
+  color: #fff;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.section-brand .container-v2 { position: relative; z-index: 1; width: 100%; }
+@media (max-width: 767px) { .section-brand { min-height: 0; padding: 4rem 0; } }
+.section-brand .eyebrow-v2 { color: #fff; }
+.section-brand .eyebrow-v2::before { background: var(--color-gold); }
+.section-brand .section-head h2 { color: #fff; }
+
+.section-brand .feature-card-v2 {
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 20px 45px rgba(6, 18, 38, 0.35);
+  transition: transform var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard);
+}
+.section-brand .feature-card-v2:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 58px rgba(6, 18, 38, 0.42);
+}
+.section-brand .feature-card-v2 .feature-icon {
+  background: var(--gradient-brand-2);
+  color: #fff;
+}
+/* .feature-card-v2 h3 has no color of its own elsewhere - it normally inherits the navy
+   text color from .section-light. .section-brand sets color:#fff for everything else in
+   the section, which would otherwise turn card headings invisible (white on a white card). */
+.section-brand .feature-card-v2 h3 { color: var(--text-on-light); }
+
+/* ---------- About us ----------------------------------------------------------------- */
+.about-grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 3.5rem; align-items: center; margin-top: 1rem; }
+@media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+.about-media { position: relative; }
+.about-media-frame {
+  position: relative; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg);
+  aspect-ratio: 4 / 3;
+}
+.about-media-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.about-media-frame::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14);
+  background: linear-gradient(180deg, rgba(11,31,58,0) 55%, rgba(11,31,58,0.5) 100%);
+  pointer-events: none;
+}
+.about-media-glow {
+  position: absolute; inset: -18px; z-index: -1; border-radius: calc(var(--radius-xl) + 18px);
+  background: var(--gradient-brand-2); opacity: 0.16; filter: blur(28px);
+}
+.about-media-badge {
+  position: absolute; left: 1.5rem; bottom: -1.5rem; z-index: 2;
+  display: flex; align-items: center; gap: 0.9rem;
+  background: var(--surface-light-1); border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+  padding: 0.9rem 1.3rem; border: var(--border-glass-light);
+}
+.about-media-badge .about-media-badge-icon {
+  width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+  background: var(--gradient-brand-2); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+}
+.about-media-badge strong { display: block; font-size: 1.3rem; line-height: 1; color: var(--text-on-light); }
+.about-media-badge span { display: block; font-size: 0.78rem; color: var(--text-on-light-faint); margin-top: 0.3rem; }
+@media (max-width: 900px) { .about-media-badge { left: 1.25rem; bottom: -1.25rem; } }
+
+.about-content .about-content-title { font-size: clamp(1.4rem, 2.4vw, 1.8rem); margin: 0 0 1.75rem; }
+.about-block { display: flex; gap: 1.1rem; margin-bottom: 1.75rem; }
+.about-block:last-child { margin-bottom: 0; }
+.about-block-icon {
+  width: 46px; height: 46px; border-radius: var(--radius-sm); background: rgba(23, 105, 224,0.08);
+  color: var(--color-primary); display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+}
+.about-block h4 { font-size: 1.05rem; margin: 0 0 0.4rem; }
+.about-block p { color: var(--text-on-light-muted); font-size: 0.95rem; line-height: 1.65; margin: 0; }
+
+/* ---------- Client login modal (honest "coming soon" state) ---------------------- */
+/* ---------- Footer v2: premium refresh --------------------------------------------
+   Real bug fixed here: the legacy `p { color: #2a2a2a; }` rule in style.css targets the
+   <p> tags directly, so it beats .footer-v2's inherited (lowest-priority) muted color
+   regardless of the ancestor rule's specificity - the address/phone/email lines and the
+   icons inside them were rendering near-black-on-navy, effectively invisible. Fixed by
+   giving those <p> tags their own classes (.footer-tagline / .footer-line) with an
+   explicit color, which beats the bare `p` element selector. */
+.footer-v2 {
+  position: relative;
+  background: var(--surface-dark-0);
+  color: var(--text-on-dark-muted);
+  padding: 4.5rem 0 2rem;
+  overflow: hidden;
+}
+.footer-v2::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 50%, var(--color-gold) 100%);
+  opacity: 0.65;
+}
+.footer-v2 .footer-grid { display: grid; grid-template-columns: minmax(220px, 1.3fr) repeat(4, minmax(130px, 1fr)); gap: 2.5rem; margin-bottom: 3rem; }
+@media (max-width: 860px) { .footer-v2 .footer-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .footer-v2 .footer-grid { grid-template-columns: 1fr; } }
+
+.footer-v2 .brand-name { color: #fff; font-weight: 800; font-size: 1.25rem; margin-bottom: 0.9rem; display: block; letter-spacing: 0.01em; }
+.footer-v2 .footer-tagline { color: var(--text-on-dark-muted); font-size: 0.9rem; line-height: 1.65; margin-bottom: 1.5rem; max-width: 30ch; }
+.footer-v2 .footer-line { color: var(--text-on-dark-muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 0.55rem; display: flex; align-items: flex-start; gap: 0.1rem; }
+.footer-v2 .footer-line-last { margin-bottom: 0; }
+.footer-v2 .footer-line i { color: var(--color-accent); width: 1.1em; margin-top: 0.2em; flex-shrink: 0; }
+.footer-v2 .footer-line a { color: inherit; }
+.footer-v2 .footer-line a:hover { color: var(--color-accent); }
+
+.footer-v2 h4 {
+  color: #fff;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin-bottom: 1.35rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+.footer-v2 h4::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 24px;
+  height: 2px;
+  background: var(--gradient-brand-2);
+  border-radius: 2px;
+}
+.footer-v2 ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+.footer-v2 ul a { font-size: 0.9rem; transition: color var(--duration-base) var(--ease-standard), padding-left var(--duration-base) var(--ease-standard); }
+.footer-v2 ul a:hover { padding-left: 0.25rem; }
+.footer-v2 a { color: var(--text-on-dark-muted); text-decoration: none; }
+.footer-v2 a:hover { color: var(--color-accent); }
+
+.footer-v2 .footer-social { display: flex; gap: 0.65rem; margin-top: 1.5rem; }
+.footer-v2 .footer-social a {
+  width: 38px;
+  height: 38px;
+  transition: transform var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.footer-v2 .footer-social a img { object-fit: cover; }
+.footer-v2 .footer-social a:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3); }
+
+.footer-v2 .footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-on-dark-faint);
+}
+.footer-v2 .footer-bottom a { color: var(--text-on-dark-muted); font-weight: 600; }
+.footer-v2 .footer-bottom a:hover { color: var(--color-accent); }
+
+/* ---------- Misc helpers ----------------------------------------------------------- */
+.hide-until-js { display: none; }
+html.js .hide-until-js { display: block; }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+@media (max-width: 767px) {
+  .section-v2 { padding: 3.5rem 0; }
+  .uni-hero-actions .btn-v2 { flex: 1; }
+}
+
+/* ---------- Testimonial star ratings ----------------------------------------
+   Gold is the brand's "small accents / achievements" color - a 5-star rating is
+   exactly that, so it overrides whatever color .stars i would otherwise inherit. */
+.stars i { color: var(--color-gold); }
+.stars { display: flex; gap: 0.15rem; }
+
+/* ---------- Testimonials: premium refresh ----------------------------------------
+   refine.css already gave these cards one redesign ("Testimonials: full redesign"),
+   but that predates the 2026 brand palette - its pink quote mark, orange stars and
+   maroon accent text (#f0d3d6 / #f5a425 / #6a1a21) don't match Deep Navy/Blue/Teal/
+   Gold anywhere else on the site. Loading after refine.css, these rules restate the
+   same selectors so the new palette + a bit more polish (bigger radius, real shadow
+   tokens, a hover lift) take over cleanly without having to touch that file. */
+#testimonial.section-v2 { padding: 5.5rem 0; }
+.testimonial-carousel .testimonial-item {
+  background: var(--surface-light-1);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2.25rem 2rem;
+  box-shadow: var(--shadow-md);
+  border: var(--border-glass-light);
+  margin: 0.75rem 0.6rem 3rem;
+  transition: transform var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard);
+}
+.testimonial-carousel .testimonial-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+.testimonial-item .quote-mark {
+  color: var(--color-primary);
+  opacity: 0.2;
+  font-size: 2.75rem;
+}
+.testimonial-item .testimonial-text {
+  color: var(--text-on-light);
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+.testimonial-item .testimonial-person {
+  gap: 1rem;
+  border-top: 1px solid rgba(11, 31, 58, 0.08);
+}
+.testimonial-item .testimonial-person img {
+  border: 3px solid var(--surface-light-2);
+  box-shadow: 0 0 0 2px rgba(23, 105, 224, 0.2);
+}
+.testimonial-item .testimonial-person-info h5 { color: var(--text-on-light); font-size: 1rem; font-weight: 700; margin: 0 0 0.15rem; }
+.testimonial-item .testimonial-person-info span { color: var(--color-primary); font-size: 0.85rem; font-weight: 600; }
+.testimonial-item .testimonial-link {
+  display: inline-block; margin-top: 0.35rem; font-size: 0.8rem; font-weight: 600;
+  color: var(--color-accent-dark); text-decoration: none;
+}
+.testimonial-item .testimonial-link:hover { text-decoration: underline; }
+.testimonial-carousel .owl-nav button { color: var(--color-primary) !important; }
+
+/* ---------- Contact: premium refresh -----------------------------------------
+   Renaming .right-info -> .contact-info-card and dropping the #contact id in the
+   markup retires the old style.css block wholesale (section.contact-us #contact,
+   section.contact-us .right-info) rather than fighting it with higher specificity -
+   those selectors simply no longer match anything, so this is a clean cutover. */
+.contact-v2 .section-head { margin-bottom: 3rem; }
+.contact-grid { align-items: stretch; }
+
+.contact-form-card {
+  background: var(--surface-light-1);
+  border-radius: var(--radius-lg);
+  border: var(--border-glass-light);
+  box-shadow: var(--shadow-md);
+  padding: 2.75rem 2.5rem;
+  height: 100%;
+}
+.contact-form-card .form-control {
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(11, 31, 58, 0.14);
+  background: var(--surface-light-0);
+  font-size: 0.95rem;
+  color: var(--text-on-light);
+  transition: border-color var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard), background var(--duration-base) var(--ease-standard);
+}
+.contact-form-card .form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.15);
+  background: #fff;
+}
+.contact-form-card .form-floating > label { color: var(--text-on-light-muted); }
+.contact-form-card .btn-primary {
+  background: var(--gradient-brand);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 14px 30px rgba(23, 105, 224, 0.28);
+  transition: transform var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard);
+}
+.contact-form-card .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(23, 105, 224, 0.36);
+}
+.contact-form-card .btn-primary i { margin-left: 0.5rem; }
+
+.contact-info-card {
+  background: var(--surface-dark-0);
+  border-radius: var(--radius-lg);
+  padding: 2.75rem 2.5rem;
+  height: 100%;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.contact-info-card ul { list-style: none; margin: 0; padding: 0; }
+.contact-info-card ul li {
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-start;
+  padding-bottom: 1.75rem;
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.contact-info-card ul li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.contact-info-icon {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-brand-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(15, 163, 168, 0.3);
+}
+.contact-info-card h6 { color: #fff; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.35rem; }
+.contact-info-card ul li span { display: block; font-size: 0.95rem; color: var(--text-on-dark-muted); font-weight: 400; }
+@media (max-width: 991px) {
+  .contact-form-card, .contact-info-card { padding: 2rem; }
+}
+
+/* ---------- Partner Institutions logo strip ----------------------------------
+   The legacy .services rule in style.css sets `position: absolute` with no top/left -
+   left over from a completely different original-template component that reused this
+   class name. With no top/left it doesn't jump far, but it IS pulled out of normal
+   document flow, so it stops contributing its own height and whatever follows it in the
+   DOM slides up underneath/over it - the overlapping "ghost text" and barely-visible
+   heading this produced. Restoring normal flow fixes the overlap outright.
+   The heading and the carousel used to be two separate <section>s with two different
+   background colors, so they're one section now with one background - flat Deep Navy
+   (#0B1F3A, var(--surface-dark-0)), the same color as every other dark section on the
+   site - with the white logo cards given an ambient glow so they read as "lit" against
+   it rather than just sitting on top of it. */
+section.services {
+  position: relative;
+  margin-top: 0;
+  padding: 5.5rem 0;
+  overflow: hidden;
+  background: var(--surface-dark-0);
+  color: #fff;
+}
+.services .eyebrow-v2 { color: #fff; }
+.services .eyebrow-v2::before { background: var(--color-gold); }
+.services .section-head h2 { color: #fff; }
+.services .section-head p { color: rgba(255,255,255,0.95); }
+.services .owl-service-item.owl-carousel { margin-bottom: 1.25rem; }
+.services .owl-service-item .item { padding: 0 0.6rem; }
+.services .owl-service-item .down-content {
+  background: #ffffff;
+  border: 1px solid rgba(255,255,255,0.45);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 28px rgba(6, 18, 38, 0.28), 0 0 26px rgba(255,255,255,0.18);
+  padding: 1.1rem 1.3rem;
+  height: 6.4rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard);
+}
+.services .owl-service-item .down-content:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 38px rgba(6, 18, 38, 0.32), 0 0 44px rgba(255,255,255,0.38), 0 0 0 1px rgba(255,255,255,0.55);
+}
+.services .owl-service-item .down-content img {
+  height: 3.6rem; width: 100%; object-fit: contain;
+}
+/* The bundled owl.carousel.js injects its nav buttons' text straight into the button
+   (`.html(navText[0])`, no <span> wrapper) - style.css's ".owl-prev span{opacity:0}"
+   rule was written for a <span> that never actually exists in this version, so the
+   literal words "prev"/"next" rendered in plain text next to the circular arrow icon.
+   The real fix is passing empty navText from the owlCarousel() call in custom.js;
+   this is a fallback in case any other .owl-nav in the future forgets to do that. */
+.services .owl-nav .owl-prev,
+.services .owl-nav .owl-next {
+  font-size: 0;
+}

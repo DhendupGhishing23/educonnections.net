@@ -1,0 +1,107 @@
+<%- include('partials/head', {
+    title: title,
+    description: description,
+    needsRecaptcha: false
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="hero-v2" style="padding: 3.5rem 0 3rem;">
+    <div class="container-v2">
+        <nav class="breadcrumb-v2" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/programs">Programs</a><span>/</span><span><%= title %></span></nav>
+        <span class="eyebrow-v2" style="margin-top:1rem;"><%= kind === 'category' ? 'Field of study' : 'Verified program' %></span>
+        <h1 style="color:#fff; font-size: clamp(1.9rem, 3.5vw, 2.6rem);"><%= title %></h1>
+        <p class="text-muted-dark" style="max-width:620px;"><%= description %></p>
+    </div>
+</section>
+
+<% if (kind === 'category') { %>
+<section class="section-v2 section-light">
+    <div class="container-v2">
+        <div class="section-head align-left" style="margin-bottom:1.5rem;">
+            <span class="eyebrow-v2">Institutions</span>
+            <h2>Partner institutions in this field</h2>
+        </div>
+        <% if (matchingInstitutions.length) { %>
+        <div class="uni-grid-v2">
+            <% matchingInstitutions.forEach(function (u) { %>
+            <div class="uni-card-v2">
+                <div class="uni-card-top">
+                    <div class="uni-logo-wrap"><img src="/assets/images/<%= u.logo %>" loading="lazy" decoding="async" alt="<%= u.name %> logo"></div>
+                </div>
+                <h3><a href="/universities/<%= u.slug %>" style="color:inherit; text-decoration:none;"><%= u.name %></a></h3>
+                <div class="uni-meta-row">
+                    <span><i class="fa fa-map-marker" aria-hidden="true"></i> <%= u.location %></span>
+                    <span class="badge-type"><%= u.category %></span>
+                </div>
+                <p class="uni-desc"><%= u.countryName %> · <%= u.type %></p>
+                <div class="uni-card-footer">
+                    <a href="/universities/<%= u.slug %>" class="btn-v2 btn-v2-outline-light btn-v2-sm">View University</a>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+        <% } else { %>
+        <p class="text-muted-light">No partner institutions currently match this field. <a href="/#contact-us">Contact us</a> for options.</p>
+        <% } %>
+
+        <% if (matchingPrograms.length) { %>
+        <div class="section-head align-left" style="margin: 3rem 0 1.5rem;">
+            <span class="eyebrow-v2">Verified</span>
+            <h2>Real programs in this field</h2>
+        </div>
+        <div class="tag-list">
+            <% matchingPrograms.forEach(function (p) { %>
+            <a href="/programs/<%= p.slug %>" class="tag" style="text-decoration:none; color:inherit;"><%= p.name %></a>
+            <% }); %>
+        </div>
+        <% } %>
+    </div>
+</section>
+<% } else { %>
+<section class="section-v2 section-light">
+    <div class="container-v2">
+        <div class="info-grid-2">
+            <div class="info-card">
+                <h2><i class="fa fa-graduation-cap" aria-hidden="true"></i> Program details</h2>
+                <dl style="margin:0 0 1.25rem;">
+                    <div class="info-row"><dt>Level</dt><dd><%= program.level %></dd></div>
+                    <div class="info-row"><dt>Field</dt><dd><% if (fieldCategorySlug) { %><a href="/programs/<%= fieldCategorySlug %>"><%= program.fieldCategory %></a><% } else { %><%= program.fieldCategory %><% } %></dd></div>
+                    <% if (institution) { %>
+                    <div class="info-row"><dt>Institution</dt><dd><a href="/universities/<%= institution.slug %>"><%= institution.name %></a></dd></div>
+                    <div class="info-row"><dt>Location</dt><dd><%= institution.location %>, <%= institution.countryName %></dd></div>
+                    <% } %>
+                    <div class="info-row"><dt>Duration &amp; fees</dt><dd><span class="unavailable-note"><i class="fa fa-info-circle" aria-hidden="true"></i> Information unavailable</span></dd></div>
+                </dl>
+                <p style="font-size:0.85rem; color:var(--text-on-light-faint);">Source: <%= program.source %>.</p>
+            </div>
+            <div class="info-card">
+                <h2><i class="fa fa-quote-left" aria-hidden="true"></i> Student story</h2>
+                <% if (relatedTestimonial) { %>
+                <blockquote style="margin:0; padding-left:1rem; border-left:3px solid var(--color-primary);">
+                    <p style="color:var(--text-on-light-muted); font-style:italic; margin-bottom:0.75rem;">"<%= relatedTestimonial.quote %>"</p>
+                    <footer style="display:flex; align-items:center; gap:0.75rem;">
+                        <img src="/assets/images/<%= relatedTestimonial.avatar %>" alt="" class="story-avatar" width="48" height="48" loading="lazy">
+                        <span style="font-weight:700; font-size:0.9rem;"><%= relatedTestimonial.name %></span>
+                    </footer>
+                </blockquote>
+                <% } else { %>
+                <p class="text-muted-light">No testimonial on file for this program yet.</p>
+                <% } %>
+                <% if (institution && institution.website) { %>
+                <div style="margin-top:1.5rem;"><a href="<%= institution.website %>" target="_blank" rel="noopener" class="btn-v2 btn-v2-primary btn-v2-sm">Visit <%= institution.name %></a></div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+<% } %>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

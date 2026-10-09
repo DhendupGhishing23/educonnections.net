@@ -1,0 +1,106 @@
+/* ==========================================================================
+   tokens.css — design tokens for the EduConnections site.
+   Loaded once, sitewide, before redesign.css. Nothing in the original
+   style.css / refine.css is touched — this and redesign.css layer a new
+   visual system on top via CSS variables + higher-specificity rules, so a
+   partial rollback (delete these two files + the two <link> tags) returns
+   the site to exactly its previous look.
+
+   Palette below matches the client brand sheet:
+     Deep Navy         #0B1F3A  - header, footer, headings
+     Professional Blue #1769E0  - primary buttons, links
+     Teal               #0FA3A8 - highlights, icons, secondary buttons
+     White              #FFFFFF - main background
+     Light Blue/Gray    #F4F8FC - section backgrounds
+     Warm Gold          #F5B942 - small accents / achievements
+   Everything else below (the "-dark"/"-light" steps, surfaces, text colors,
+   shadows) is derived from those six so the whole system stays one
+   consistent family; every derived pair was checked against WCAG AA
+   (4.5:1 normal text / 3:1 large text & UI) rather than picked by eye.
+   ========================================================================== */
+:root {
+  /* ---- Brand palette (client brand sheet) ---- */
+  --color-primary: #1769E0;
+  --color-primary-dark: #125BC4;
+  --color-primary-light: #5B9AEC;
+  --color-accent: #0FA3A8;
+  --color-accent-dark: #0B7D81;
+  --color-secondary: #0FA3A8;
+  --color-gold: #F5B942;
+  --color-gold-dark: #C9922A; /* darker hover-state shade for gold BACKGROUNDS only - gold text
+                                  itself measures well under 4.5:1 on white at any reasonable
+                                  darkening, so gold is never used as a text color on light
+                                  surfaces (see .achievement-badge / .stars below) */
+  --color-dark: #0B1F3A;
+  --color-light: #F4F8FC;
+
+  /* ---- Surfaces ---- */
+  --surface-dark-0: #0B1F3A;
+  --surface-dark-1: #112A4D;
+  --surface-dark-2: #16345E;
+  --surface-dark-border: rgba(130, 180, 245, 0.16);
+  --surface-light-0: #F4F8FC;
+  --surface-light-1: #ffffff;
+  --surface-light-2: #EAF1FA;
+  --surface-light-border: rgba(11, 31, 58, 0.08);
+
+  /* ---- Text ---- */
+  --text-on-dark: #ffffff;
+  --text-on-dark-muted: #a9bcd6;
+  --text-on-dark-faint: #7d93b3;
+  --text-on-light: #0B1F3A;
+  --text-on-light-muted: #4d5d76;
+  --text-on-light-faint: #5c6b85; /* kept dark enough to clear 4.5:1 on --surface-light-0 for real text uses (breadcrumbs, "Information unavailable" notes), not just icons/decoration */
+
+  /* ---- Gradients ---- */
+  /* Uses --color-accent-dark rather than --color-accent: white button/label text on the
+     lighter teal measured ~3.1:1 (fails WCAG AA for normal text); accent-dark keeps the same
+     blue->teal feel while staying >=4.5:1 for white text across the whole gradient.
+     --color-accent itself is untouched and still used at full brightness anywhere it's the
+     foreground (glow, icons, borders, chip text) rather than a background behind white text. */
+  --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-dark) 100%);
+  --gradient-brand-2: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  --gradient-hero:
+    radial-gradient(circle at 14% 18%, rgba(23, 105, 224, 0.34), transparent 42%),
+    radial-gradient(circle at 84% 6%, rgba(15, 163, 168, 0.26), transparent 40%),
+    radial-gradient(circle at 60% 92%, rgba(15, 163, 168, 0.20), transparent 46%),
+    linear-gradient(180deg, #0B1F3A 0%, #0E2444 60%, #112A4D 100%);
+  --gradient-text: linear-gradient(135deg, #7dd3fc 0%, #93c5fd 35%, #6ee7e0 100%);
+
+  /* ---- Radii ---- */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* ---- Elevation / glow ---- */
+  --shadow-sm: 0 2px 10px rgba(11, 31, 58, 0.06);
+  --shadow-md: 0 12px 28px rgba(11, 31, 58, 0.10);
+  --shadow-lg: 0 24px 56px rgba(11, 31, 58, 0.28);
+  --glow-primary: 0 0 0 1px rgba(23, 105, 224, 0.45), 0 0 26px rgba(23, 105, 224, 0.35);
+  --glow-accent: 0 0 0 1px rgba(15, 163, 168, 0.45), 0 0 26px rgba(15, 163, 168, 0.30);
+  --border-glass-dark: 1px solid rgba(255, 255, 255, 0.10);
+  --border-glass-light: 1px solid rgba(11, 31, 58, 0.06);
+
+  /* ---- Motion ---- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-base: 240ms;
+  --duration-slow: 420ms;
+
+  /* ---- Type ---- */
+  --font-sans: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* ---- Layout ---- */
+  --nav-height: 78px;
+  --container-max: 1280px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}

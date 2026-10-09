@@ -1,0 +1,51 @@
+<%- include('partials/head', {
+    title: 'Destinations',
+    description: 'See which universities and colleges Edu Connections partners with in Australia, New Zealand, Canada and South Korea.',
+    needsRecaptcha: false
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="hero-v2" style="padding: 3.5rem 0 3rem;">
+    <div class="container-v2">
+        <nav class="breadcrumb-v2" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Countries</span></nav>
+        <span class="eyebrow-v2" style="margin-top:1rem;">Where you can study</span>
+        <h1 style="color:#fff; font-size: clamp(1.9rem, 3.5vw, 2.6rem);">Destination Countries</h1>
+        <p class="text-muted-dark" style="max-width:560px;">Pick a country to see the universities and colleges we partner with there.</p>
+    </div>
+</section>
+
+<section class="section-v2 section-light">
+    <div class="container-v2">
+        <div class="country-grid-v2">
+            <% Object.keys(destinations).forEach(function(slug) { var d = destinations[slug]; %>
+            <a class="country-card-v2" href="/destinations/<%= slug %>">
+                <div class="card-media">
+                    <img src="/assets/images/<%= d.flag %>" width="900" height="600" loading="lazy" decoding="async" alt="<%= d.name %> flag">
+                    <span class="flag-badge"><img src="/assets/images/<%= d.flag %>" alt="" loading="lazy"></span>
+                </div>
+                <div class="card-body">
+                    <h3><%= d.name %></h3>
+                    <span class="card-count"><%= d.universities.length ? d.universities.length + '+ partner institution' + (d.universities.length === 1 ? '' : 's') : 'Institutions coming soon' %></span>
+                    <p class="card-desc"><%= d.tagline %></p>
+                    <% if (d.popularFields.length) { %>
+                    <div class="field-chip-list">
+                        <% d.popularFields.forEach(function (f) { %><span class="field-chip"><%= f %></span><% }); %>
+                    </div>
+                    <% } %>
+                    <span class="card-cta">Explore <%= d.name %> <svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="20" y2="12"></line><polyline points="14 5 21 12 14 19"></polyline></svg></span>
+                </div>
+            </a>
+            <% }); %>
+        </div>
+    </div>
+</section>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

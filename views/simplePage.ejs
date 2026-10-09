@@ -1,0 +1,32 @@
+<%- include('partials/head', {
+    title: title,
+    description: description,
+    needsRecaptcha: false
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="hero-v2" style="padding: 3.5rem 0 3rem;">
+    <div class="container-v2">
+        <nav class="breadcrumb-v2" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span><%= title %></span></nav>
+        <h1 style="color:#fff; font-size: clamp(1.9rem, 3.5vw, 2.6rem); margin-top:1rem;"><%= title %></h1>
+    </div>
+</section>
+
+<section class="section-v2 section-light">
+    <div class="container-v2" style="max-width:760px;">
+        <div class="info-card">
+            <p style="color:var(--text-on-light-muted); line-height:1.75;"><%= body %></p>
+            <p style="margin-top:1.25rem;">Questions? <a href="mailto:info@educonnections.net">info@educonnections.net</a> or <a href="/#contact-us">contact us</a>.</p>
+        </div>
+    </div>
+</section>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

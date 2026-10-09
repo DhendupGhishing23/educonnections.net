@@ -1,0 +1,51 @@
+<%- include('partials/head', {
+    title: 'Services',
+    description: 'Explore every service Edu Connections offers - education counselling, college admissions, health insurance, student visas, the 485 visa and airport pick-up.',
+    needsRecaptcha: false
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="hero-v2" style="padding: 3.5rem 0 3rem;">
+    <div class="container-v2">
+        <nav class="breadcrumb-v2" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Services</span></nav>
+        <span class="eyebrow-v2" style="margin-top:1rem;">What we offer</span>
+        <h1 style="color:#fff; font-size: clamp(1.9rem, 3.5vw, 2.6rem);">Our Services</h1>
+        <p class="text-muted-dark" style="max-width:620px;">From your first consultation to landing at the airport, here is exactly how Edu Connections supports you at every step of studying abroad.</p>
+    </div>
+</section>
+
+<div class="container">
+    <% services.forEach(function(service) { %>
+    <section class="service-detail" id="<%= service.slug %>">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5">
+                <img src="/assets/images/<%= service.image %>" width="720" height="480" loading="lazy" decoding="async" alt="<%= service.title %>">
+            </div>
+            <div class="col-lg-7">
+                <h2><%= service.title %></h2>
+                <p class="summary"><%= service.summary %></p>
+                <p><%= service.description %></p>
+                <ul class="highlights">
+                    <% service.highlights.forEach(function(h) { %>
+                    <li><%= h %></li>
+                    <% }); %>
+                </ul>
+                <div class="cta-row-v2" style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:1.5rem;">
+                    <a href="/checkyoureligibility" class="btn-v2 btn-v2-primary">Check Your Eligibility</a>
+                    <a href="/#contact-us" class="btn-v2 btn-v2-outline-light">Book Free Consultation</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% }); %>
+</div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

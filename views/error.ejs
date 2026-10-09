@@ -1,0 +1,32 @@
+<%- include('partials/head', {
+    title: 'Something Went Wrong',
+    description: 'An error occurred on Edu Connections.',
+    needsRecaptcha: false
+}) %>
+
+<body>
+
+<%- include('partials/nav') %>
+
+<main id="main-content">
+<section class="section-v2 section-light" style="min-height:60vh; display:flex; align-items:center;">
+    <div class="container-v2" style="text-align:center;">
+        <div class="feature-icon" style="width:64px; height:64px; font-size:1.6rem; margin:0 auto 1.5rem; background:rgba(239,68,68,0.1); color:#dc2626;">
+            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+        </div>
+        <h1 style="margin-bottom:1rem;">Something went wrong</h1>
+        <% if (typeof error !== 'undefined' && error.length > 1) { %>
+        <p class="text-muted-light" style="max-width:480px; margin:0 auto 2rem;"><%= error %></p>
+        <% } %>
+        <div class="hero-cta-row" style="justify-content:center;">
+            <a href="/" class="btn-v2 btn-v2-primary">Back to Home</a>
+            <a href="/#contact-us" class="btn-v2 btn-v2-outline-light">Contact Us</a>
+        </div>
+    </div>
+</section>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>
